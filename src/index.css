@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --color-parchment: #e2dedb;
+  --color-bone: #cdc6be;
+  --color-ink: #1d1d1b;
+  --color-charcoal: #69645f;
+  --color-ember: #c03f13;
+  --color-teal: #00b18c;
+  --color-edge: #383835;
+  --font-display: 'Bodoni Moda', 'Playfair Display', serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-ui: 'Manrope', system-ui, sans-serif;
+  --font-gothic: 'Pirata One', serif;
+  --font-round: 'Fredoka', 'Quicksand', sans-serif;
+  --font-aalto: 'Anton', 'Bebas Neue', Impact, sans-serif;
+  --font-mango: 'Sofia Sans Extra Condensed', 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 56px; }
+
+body {
+  background: var(--color-parchment);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-weight: 300;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--color-ember); color: var(--color-parchment); }
+
+/* Canopee-style display: crushed leading, collision tracking */
+.display { font-family: var(--font-display); font-weight: 800; line-height: .76; letter-spacing: -0.07em; text-transform: uppercase; }
+.display-md { font-family: var(--font-display); font-weight: 800; line-height: .9; letter-spacing: -0.04em; }
+.eyebrow { font-family: var(--font-mono); font-size: 11px; font-weight: 400; letter-spacing: .06em; text-transform: uppercase; }
+.pill { font-family: var(--font-ui); font-size: 13px; font-weight: 600; border-radius: 9999px; }
+
+.grain::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .08; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.teal-wash { background: radial-gradient(ellipse 60% 70% at 50% 40%, rgba(0,177,140,.28), transparent 70%); }
+
+.marquee { animation: marquee 45s linear infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+
+.card-shadow { box-shadow: -4px 4px 6px rgba(29,29,27,.2); }
+
+:focus-visible { outline: 2px solid var(--color-ember); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee { animation: none; }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Fictional action button: white, yellow 2px ring, flips to black on hover */
+.btn-ring { background:#fff; color:#000; border-radius:5px; padding:10px 24px; font-family: var(--font-round); font-weight:700; font-size:17px; box-shadow:0 0 0 2px #ffd80c; transition: background .15s, color .15s, transform .15s; }
+.btn-ring:hover { background:#000; color:#fff; transform: rotate(-2deg) scale(1.04); }
+.btn-ring:active { transform: scale(.96); }
+.orbit { animation: spin var(--t, 60s) linear infinite; }
+.orbit.rev { animation-direction: reverse; }
+.orbit-counter { animation: spin var(--t, 60s) linear infinite reverse; }
+.orbit-counter.rev { animation-direction: normal; }
+.orbit-wrap:hover .orbit, .orbit-wrap:hover .orbit-counter { animation-play-state: paused; }
+.sticker { box-shadow: 4px 5px 0 rgba(29,29,27,.9), 6px 8px 18px rgba(198,185,237,.35); }
+.nameplate { font-family: var(--font-gothic); letter-spacing: 0; }
+.dropcap::first-letter { font-family: var(--font-display); font-weight: 800; float: left; font-size: 5.6em; line-height: .72; padding: .06em .1em 0 0; color: var(--color-ember); letter-spacing: -0.05em; }
+@media (prefers-reduced-motion: reduce) { .orbit, .orbit-counter { animation: none; } }
+
+/* StaggeredMenu — Yuva skin */
+.yuva-menu .staggered-menu-header { height: 56px; padding: 0 clamp(20px, 3vw, 40px); }
+.yuva-menu .sm-toggle { font-family: var(--font-mono); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; font-weight: 400; }
+.yuva-menu .staggered-menu-panel { background: #e2dedb; backdrop-filter: none; padding: 6em 2em 2em; }
+.yuva-menu .sm-panel-item { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.05em; font-size: clamp(2.4rem, 4.2vw, 3rem); color: #1d1d1b; }
+.yuva-menu .sm-panel-list[data-numbering] .sm-panel-item::after { font-family: var(--font-mono); }
+.yuva-menu .sm-panel-item { padding-right: 2.2em; }
+.yuva-menu .sm-panel-list[data-numbering] .sm-panel-item::after { right: 0; top: 0.2em; font-size: 14px; }
