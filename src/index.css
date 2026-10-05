@@ -82,3 +82,17 @@ body {
 .yuva-menu .sm-panel-list[data-numbering] .sm-panel-item::after { font-family: var(--font-mono); }
 .yuva-menu .sm-panel-item { padding-right: 2.2em; }
 .yuva-menu .sm-panel-list[data-numbering] .sm-panel-item::after { right: 0; top: 0.2em; font-size: 14px; }
+
+/* ---- mobile polish ---- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+button, a, [role='tab'] { touch-action: manipulation; }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.yuva-menu .sm-toggle { min-height: 44px; padding: 0 2px; }
+.yuva-menu .sm-panel-item { padding-top: .12em; padding-bottom: .12em; }
+@media (max-width: 640px) {
+  .yuva-menu .staggered-menu-panel { width: 100vw; padding-top: 5.5em; }
+  .yuva-menu .sm-prelayers { width: 100vw; }
+  .btn-ring { padding: 12px 22px; }
+}
+footer { padding-bottom: max(2rem, env(safe-area-inset-bottom)); }

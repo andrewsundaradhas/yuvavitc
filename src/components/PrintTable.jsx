@@ -19,7 +19,7 @@ export default function PrintTable() {
   const [grabs, setGrabs] = useState(0)
   const [stage, setStage] = useState(400)
   useEffect(() => {
-    const on = () => setStage(innerWidth < 640 ? 340 : innerWidth < 1024 ? 300 : 400)
+    const on = () => setStage(innerWidth < 640 ? 320 : innerWidth < 1024 ? 300 : 400)
     on(); addEventListener('resize', on)
     return () => removeEventListener('resize', on)
   }, [])

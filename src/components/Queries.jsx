@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useAnimationControls } from 'framer-motion'
 import { Sticker, FIC } from './Sticker'
 
-// Optional: set VITE_QUERY_ENDPOINT (e.g. a Formspree / Vercel function URL) to POST queries as JSON.
-const ENDPOINT = import.meta.env.VITE_QUERY_ENDPOINT
+// Queries are emailed to the inbox(es) below via FormSubmit (https://formsubmit.co).
+// Override with VITE_QUERY_ENDPOINT (e.g. your own Vercel function) if you ever move off FormSubmit.
+const RECIPIENT = 'aaathi241@gmail.com'
+const ENDPOINT = import.meta.env.VITE_QUERY_ENDPOINT || `https://formsubmit.co/ajax/${RECIPIENT}`
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const MAX = 600
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -21,6 +24,8 @@ const fold = { duration: 0.6, ease: [0.65, 0, 0.35, 1] }
 
 export default function Queries() {
   const [value, setValue] = useState('')
+  const [email, setEmail] = useState('')
+  const [trap, setTrap] = useState('') // honeypot: real people never fill this
   const [phase, setPhase] = useState('idle') // idle | folding | flying | sent | error
   const [stage, setStage] = useState(0)
   const [hint, setHint] = useState('')
@@ -34,11 +39,29 @@ export default function Queries() {
 
   useEffect(() => () => { alive.current = false }, [])
 
-  const post = (q) =>
-    ENDPOINT
-      ? fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ query: q, page: location.href, sentAt: new Date().toISOString() }) })
-          .then((r) => { if (!r.ok) throw new Error('bad status') })
-      : Promise.resolve()
+  const post = async (q, replyTo) => {
+    if (trap) return // bot: pretend it worked, send nothing
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        message: q,
+        ...(replyTo ? { email: replyTo, _replyto: replyTo } : {}),
+        name: replyTo || 'Website visitor',
+        page: location.href,
+        sentAt: new Date().toISOString(),
+        _subject: 'New query — Yuva VIT Chennai website',
+        _template: 'table',
+        _captcha: 'false',
+      }),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || data.success === false || data.success === 'false') {
+      // e.g. FormSubmit before the recipient has clicked the "Activate Form" email
+      console.warn('[Queries] not delivered:', data.message || res.status)
+      throw new Error(data.message || 'send failed')
+    }
+  }
 
   const submit = async () => {
     if (busy) return
@@ -48,8 +71,10 @@ export default function Queries() {
       shake.start({ x: [0, -10, 10, -6, 6, 0], transition: { duration: 0.4 } })
       return
     }
+    const replyTo = email.trim()
+    if (replyTo && !EMAIL_RE.test(replyTo)) { setHint('That email doesn’t look right — fix it or clear it ✦'); return }
     setHint('')
-    const sending = post(q).then(() => true, () => false)
+    const sending = post(q, replyTo).then(() => true, () => false)
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const rect = cardRef.current.getBoundingClientRect()
     setSize({ w: rect.width, h: rect.height })
@@ -84,7 +109,7 @@ export default function Queries() {
   const onKey = (e) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); submit() }
   }
-  const again = () => { setValue(''); setStage(0); setHint(''); setPhase('idle') }
+  const again = () => { setValue(''); setEmail(''); setStage(0); setHint(''); setPhase('idle') }
 
   const planeW = Math.min(300, size.w * 0.7)
   const target = { width: planeW, height: planeW * (200 / 300) }
@@ -115,18 +140,22 @@ export default function Queries() {
             ) : (
               <motion.div key="form" exit={{ opacity: 0 }}>
                 <motion.div animate={shake}>
-                  <div ref={cardRef} className="rounded-[15px] bg-white p-5 text-black transition-opacity duration-150 md:p-8" style={{ boxShadow: '0 0 0 2px #000', opacity: busy ? 0 : 1 }} aria-hidden={busy}>
+                  <div ref={cardRef} className="relative rounded-[15px] bg-white p-5 text-black transition-opacity duration-150 md:p-8" style={{ boxShadow: '0 0 0 2px #000', opacity: busy ? 0 : 1 }} aria-hidden={busy}>
                     <label htmlFor="query" className="eyebrow mb-3 block text-black/70">Your query</label>
                     <textarea id="query" value={value} onChange={(e) => { setValue(e.target.value.slice(0, MAX)); if (hint) setHint('') }} onKeyDown={onKey} rows={3} maxLength={MAX} disabled={busy}
                       placeholder="What would you like to ask us?"
-                      className="block w-full resize-none rounded-[5px] border border-[#101010] bg-white px-4 py-3 font-round text-[clamp(20px,2.4vw,32px)] font-medium leading-[1.25] text-[#101010] outline-none transition placeholder:text-black/35 hover:bg-[#fffaf1] focus:border-2 focus:px-[15px] focus:py-[11px]" />
-                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                      className="block w-full resize-none rounded-[5px] border border-[#101010] bg-white px-4 py-3 font-round text-[clamp(18px,2.4vw,32px)] font-medium leading-[1.25] text-[#101010] outline-none transition placeholder:text-black/35 hover:bg-[#fffaf1] focus:border-2 focus:px-[15px] focus:py-[11px]" />
+                    <label htmlFor="query-email" className="eyebrow mb-2 mt-5 block text-black/70">Your email <span className="normal-case tracking-normal text-black/45">(optional — so we can reply)</span></label>
+                    <input id="query-email" type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); if (hint) setHint('') }} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); submit() } }} disabled={busy} placeholder="you@example.com"
+                      className="block w-full rounded-[5px] border border-[#101010] bg-white px-4 py-3 font-round text-[17px] font-medium text-[#101010] outline-none transition placeholder:text-black/35 hover:bg-[#fffaf1] focus:border-2 focus:px-[15px] focus:py-[11px]" />
+                    <input type="text" name="website" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} className="absolute -left-[9999px] h-0 w-0 opacity-0" aria-hidden="true" />
+                    <div className="mt-5 flex flex-col-reverse gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
                       <p className={`font-round text-[15px] font-medium ${hint || phase === 'error' ? 'text-[#fd4b38]' : 'text-black/55'}`} aria-live="polite">
                         {phase === 'error' ? 'Couldn’t send that — please try again.' : hint || 'Enter to send · Shift + Enter for a new line'}
                       </p>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center justify-between gap-4 sm:justify-start">
                         <span className="font-round text-[14px] text-black/45" aria-hidden="true">{value.length}/{MAX}</span>
-                        <button type="button" onClick={submit} disabled={busy} className="btn-ring disabled:opacity-60" aria-label="Send query">Send ✈</button>
+                        <button type="button" onClick={submit} disabled={busy} className="btn-ring min-h-[46px] disabled:opacity-60" aria-label="Send query">Send ✈</button>
                       </div>
                     </div>
                   </div>

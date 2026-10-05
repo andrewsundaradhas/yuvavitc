@@ -44,18 +44,18 @@ export default function Events({ filter, setFilter, onOpen }) {
   return (
     <section id="events">
       <Banner glow size="clamp(64px, 16vw, 230px)" className="pt-16! md:pt-12!" stickers={<>
-        <Sticker kind="burst" color={FIC.coral} shouts={['12 events!', 'Pick one!', 'Go on!', 'Scroll!']} rot={-10} size="clamp(78px,12vw,180px)" className="left-[2%] top-[4%] md:top-[8%]" />
+        <Sticker kind="burst" color={FIC.coral} shouts={['12 events!', 'Pick one!', 'Go on!', 'Scroll!']} rot={-10} size="clamp(64px,12vw,180px)" className="left-[1%] top-[2%] md:left-[2%] md:top-[8%]" />
         <Sticker kind="label" color={FIC.lime} textColor="#000" shouts={['Start here!', 'Tap an event', 'Not that one']} rot={-14} className="hidden sm:block sm:right-[5%] sm:bottom-[10%]" />
       </>}>Events!</Banner>
       <div className="mx-auto max-w-[1440px] px-5 py-16 md:px-10 md:py-24">
         <SectionHead label="Featured Events" title={<>All Twelve <span className="opacity-35">Events</span></>}>Pick a domain to filter, then open any event to see its photos and full playbook.</SectionHead>
 
         <div className="mb-10">
-          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter by domain">
+          <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0" role="tablist" aria-label="Filter by domain">
             {[['all', { name: 'All', color: '#1d1d1b' }], ...Object.entries(domains)].map(([k, d]) => {
               const active = filter === k
               return (
-                <button key={k} role="tab" aria-selected={active} onClick={() => setFilter(k)} className="pill border border-ink px-4 py-2 transition hover:-translate-y-0.5"
+                <button key={k} role="tab" aria-selected={active} onClick={() => setFilter(k)} className="pill shrink-0 border border-ink px-4 py-3 transition hover:-translate-y-0.5 sm:py-2"
                   style={{ background: active ? d.color : 'transparent', color: active && k === 'all' ? '#e2dedb' : '#1d1d1b' }}>{d.name}</button>
               )
             })}
