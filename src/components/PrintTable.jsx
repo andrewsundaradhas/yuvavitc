@@ -1,32 +1,59 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { domains, events } from '../data'
 import PaperCrumple from './ui/PaperCrumple'
 import { Sticker, FIC } from './Sticker'
 
-const prints = [
-  { slug: 'core-reveal', rotation: -3, ouch: ['OUCH!', 'EEK!', 'NOOO!'] },
-  { slug: 'tourist-visit', rotation: 2, ouch: ['YIKES!', 'CRUNCH!', 'OOF!'] },
-  { slug: 'orphanage', rotation: -2, ouch: ['SQUISH!', 'OH NO!', 'HELP!'] },
-].map((p) => ({ ...p, e: events.find((e) => e.slug === p.slug) }))
+const SLOTS = [
+  { rotation: -3, ouch: ['OUCH!', 'EEK!', 'NOOO!'] },
+  { rotation: 2, ouch: ['YIKES!', 'CRUNCH!', 'OOF!'] },
+  { rotation: -2, ouch: ['SQUISH!', 'OH NO!', 'HELP!'] },
+]
 const relief = ['PHEW!', 'ALL BETTER', 'GOOD AS NEW', 'MOSTLY…']
 const pick = (a) => a[Math.floor(Math.random() * a.length)]
+const SHUFFLE_MS = 6000
 
 // Full-bleed violet colour block: white rounded type, stickers that react to every grab.
 export default function PrintTable() {
   const [mood, setMood] = useState({}) // slug -> { text, kind }
   const [resetKey, setResetKey] = useState(0)
   const [grabs, setGrabs] = useState(0)
-  const [stage, setStage] = useState(400)
+  const [stage, setStage] = useState(290)
+  const [offset, setOffset] = useState(0)
+  const holdingRef = useRef(false)
+
   useEffect(() => {
-    const on = () => setStage(innerWidth < 640 ? 320 : innerWidth < 1024 ? 300 : 400)
+    const on = () => setStage(innerWidth < 640 ? 250 : innerWidth < 1024 ? 235 : 290)
     on(); addEventListener('resize', on)
     return () => removeEventListener('resize', on)
   }, [])
 
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!holdingRef.current) setOffset((o) => (o + 3) % events.length)
+    }, SHUFFLE_MS)
+    return () => clearInterval(id)
+  }, [])
+
+  const prints = useMemo(
+    () => SLOTS.map((slot, i) => ({
+      ...slot,
+      e: events[(offset + i) % events.length],
+      slug: events[(offset + i) % events.length].slug,
+    })),
+    [offset]
+  )
+
   const react = (p) => (state) => {
-    if (state === 'holding') { setGrabs((g) => g + 1); setMood((m) => ({ ...m, [p.slug]: { text: pick(p.ouch), c: FIC.coral } })) }
-    else { setMood((m) => ({ ...m, [p.slug]: { text: pick(relief), c: FIC.yellow } })); setTimeout(() => setMood((m) => ({ ...m, [p.slug]: null })), 1400) }
+    if (state === 'holding') {
+      holdingRef.current = true
+      setGrabs((g) => g + 1)
+      setMood((m) => ({ ...m, [p.slug]: { text: pick(p.ouch), c: FIC.coral } }))
+    } else {
+      holdingRef.current = false
+      setMood((m) => ({ ...m, [p.slug]: { text: pick(relief), c: FIC.yellow } }))
+      setTimeout(() => setMood((m) => ({ ...m, [p.slug]: null })), 1400)
+    }
   }
 
   return (
@@ -47,7 +74,7 @@ export default function PrintTable() {
               <motion.figure key={p.slug} initial={{ opacity: 0, y: 50, rotate: n % 2 ? 2 : -2 }} whileInView={{ opacity: 1, y: 0, rotate: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ type: 'spring', stiffness: 120, damping: 14, delay: n * 0.1 }}
                 className="relative rounded-[15px]" style={{ background: FIC.cream }}>
                 <PaperCrumple
-                  src={p.e.photos[0].src} alt={p.e.photos[0].alt} width={300} height={230} sceneHeight={stage} rotation={p.rotation}
+                  src={p.e.photos[0].src} alt={p.e.photos[0].alt} width={350} height={265} sceneHeight={stage} rotation={p.rotation}
                   releaseBehavior="creased" crumpleAmount={0.9} creaseStrength={0.2} foldCount={7} detail={56}
                   paperColor="#f4f0e8" dragRadius={60} returnToOrigin resetKey={resetKey} onStateChange={react(p)}
                 />
