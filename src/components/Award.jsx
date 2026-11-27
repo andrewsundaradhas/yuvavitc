@@ -20,7 +20,7 @@ function AwardField() {
     let raf = 0
     let w = 0
     let h = 0
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const dpr = Math.min(window.devicePixelRatio || 1, 1) // soft dots look the same at 1x; never above 1 (also when zoomed out)
     const mouse = { x: -9999, y: -9999, active: false }
 
     const COLORS = ['#ffd80c', '#ffe875', '#d2e534', '#ffb4a2']
@@ -96,6 +96,7 @@ function AwardField() {
     section.addEventListener('mouseleave', onLeave)
     section.addEventListener('click', onClick)
 
+    const links = [[], [], [], []]
     const tick = (t) => {
       ctx.clearRect(0, 0, w, h)
 
@@ -159,17 +160,26 @@ function AwardField() {
         }
         for (let j = i + 1; j < particles.length; j++) {
           const q = particles[j]
-          const d = Math.hypot(p.x - q.x, p.y - q.y)
-          if (d < 95) {
-            ctx.globalAlpha = (1 - d / 95) * 0.16
-            ctx.strokeStyle = '#ffd80c'
-            ctx.lineWidth = 0.6
-            ctx.beginPath()
-            ctx.moveTo(p.x, p.y)
-            ctx.lineTo(q.x, q.y)
-            ctx.stroke()
+          const dx = p.x - q.x, dy = p.y - q.y
+          if (dx > 95 || dx < -95 || dy > 95 || dy < -95) continue
+          const d2 = dx * dx + dy * dy
+          if (d2 < 9025) {
+            // fade by distance, quantised into 4 opacity buckets so all lines draw in 4 strokes instead of one each
+            const b = Math.min(3, Math.floor((1 - Math.sqrt(d2) / 95) * 4))
+            links[b].push(p.x, p.y, q.x, q.y)
           }
         }
+      }
+      ctx.strokeStyle = '#ffd80c'
+      ctx.lineWidth = 0.6
+      for (let b = 0; b < 4; b++) {
+        const L = links[b]
+        if (!L.length) continue
+        ctx.globalAlpha = ((b + 0.5) / 4) * 0.16
+        ctx.beginPath()
+        for (let k = 0; k < L.length; k += 4) { ctx.moveTo(L[k], L[k + 1]); ctx.lineTo(L[k + 2], L[k + 3]) }
+        ctx.stroke()
+        L.length = 0
       }
 
       // Click celebratory sparks
@@ -192,13 +202,25 @@ function AwardField() {
       }
 
       ctx.globalAlpha = 1
-      raf = requestAnimationFrame(tick)
+      raf = running ? requestAnimationFrame(tick) : 0
     }
 
-    raf = requestAnimationFrame(tick)
+    let visible = false
+    let running = false
+    const sync = () => {
+      const want = visible && !document.hidden
+      if (want && !running) { running = true; raf = requestAnimationFrame(tick) }
+      else if (!want && running) { running = false; cancelAnimationFrame(raf); raf = 0 }
+    }
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync() }, { rootMargin: '100px 0px' })
+    io.observe(canvas)
+    document.addEventListener('visibilitychange', sync)
 
     return () => {
+      running = false
       cancelAnimationFrame(raf)
+      io.disconnect()
+      document.removeEventListener('visibilitychange', sync)
       window.removeEventListener('resize', onResize)
       section.removeEventListener('mousemove', onMove)
       section.removeEventListener('mouseleave', onLeave)
@@ -299,7 +321,7 @@ function HonorCard({ award, idx, onPhoto }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.7, delay: idx * 0.12, ease: [0.16, 1, 0.3, 1] }}
-      className="flex flex-col overflow-hidden rounded-2xl border border-[#ffd80c]/35 bg-[#16120c]/90 p-4 backdrop-blur-sm transition hover:border-[#ffd80c]"
+      className="flex flex-col overflow-hidden rounded-2xl border border-[#ffd80c]/35 bg-[#16120c]/90 p-4 transition hover:border-[#ffd80c]"
     >
       <button
         type="button"
@@ -529,7 +551,7 @@ export default function Award({ onPhoto }) {
                   viewport={{ once: true, margin: '-60px' }}
                   transition={{ duration: 0.6, delay: 0.65 + idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
                   whileHover={{ y: -3, borderColor: item.accent }}
-                  className="rounded-xl border border-parchment/20 bg-parchment/[0.04] px-4 py-3.5 backdrop-blur-sm transition"
+                  className="rounded-xl border border-parchment/20 bg-parchment/[0.04] px-4 py-3.5 transition"
                 >
                   <p className="eyebrow text-[10px]" style={{ color: item.accent }}>
                     {item.k}

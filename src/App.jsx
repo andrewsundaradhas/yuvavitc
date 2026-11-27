@@ -5,15 +5,18 @@ import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Intro from './components/Intro'
 import Award from './components/Award'
-const About = lazy(() => import('./components/About'))
-const Tide = lazy(() => import('./components/Tide'))
-const PrintTable = lazy(() => import('./components/PrintTable'))
+// Deferred sections: their code is off the critical path; after load + idle it is prefetched (download + parse only),
+// so scrolling never waits on a chunk. Mounting still happens near the viewport (Deferred).
+const loaders = { about: () => import('./components/About'), tide: () => import('./components/Tide'), prints: () => import('./components/PrintTable'), gallery: () => import('./components/Gallery') }
+const About = lazy(loaders.about)
+const Tide = lazy(loaders.tide)
+const PrintTable = lazy(loaders.prints)
 import Marquee from './components/Marquee'
 import Events from './components/Events'
 import EventModal from './components/EventModal'
 import Domains from './components/Domains'
 import Team from './components/Team'
-const Gallery = lazy(() => import('./components/Gallery'))
+const Gallery = lazy(loaders.gallery)
 import Lightbox from './components/Lightbox'
 import Footer from './components/Footer'
 import Queries from './components/Queries'
@@ -38,8 +41,15 @@ export default function App() {
   const close = useCallback(() => setActive(null), [])
   const onReady = useCallback(() => setReady(true), [])
   const onDone = useCallback(() => setIntro(false), [])
-  useEffect(() => { if (intro) markIntroSeen() }, [intro])
-  useEffect(() => installAnchorSettle(), []) // seen as soon as it starts: a quick reload never replays it
+  useEffect(() => { if (intro) markIntroSeen() }, [intro]) // seen as soon as it starts: a quick reload never replays it
+  useEffect(() => installAnchorSettle(), [])
+  useEffect(() => {
+    let id
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1))
+    const go = () => { id = setTimeout(() => idle(() => Object.values(loaders).forEach((load) => load().catch(() => {}))), 1500) }
+    if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true })
+    return () => { clearTimeout(id); window.removeEventListener('load', go) }
+  }, [])
   const replay = () => { window.scrollTo(0, 0); setReady(false); setHeroKey((k) => k + 1); setIntro(true) }
 
   return (
