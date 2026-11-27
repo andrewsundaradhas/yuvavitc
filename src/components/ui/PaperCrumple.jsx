@@ -308,6 +308,11 @@ const PaperCrumple = ({
     onStateChange,
     onError
   };
+  // The scene is built once; a new src/backSrc only swaps textures (see swapRef), because rebuilding the renderer
+  // + shaders froze the page for ~0.9 s every time PrintTable shuffled its prints.
+  const srcRef = useRef({ src, backSrc });
+  srcRef.current = { src, backSrc };
+  const swapRef = useRef(null);
   useEffect(() => {
     const root = rootRef.current,
       canvas = canvasRef.current,
@@ -984,10 +989,21 @@ const PaperCrumple = ({
         );
       });
     }
-    if (src) {
-      Promise.all([load(src), backSrc ? load(backSrc) : Promise.resolve(null)])
+    let shownKey = null;
+    let token = 0;
+    let liveTextures = [];
+    const apply = (nextSrc, nextBack) => {
+      const key = nextSrc + '|' + (nextBack || '');
+      if (key === shownKey) return;
+      shownKey = key;
+      const mine = ++token;
+      const first = !ready;
+      Promise.all([load(nextSrc), nextBack ? load(nextBack) : Promise.resolve(null)])
         .then(([frontTexture, backTexture]) => {
-          if (disposed) return;
+          if (disposed || mine !== token) {
+            [frontTexture, backTexture].forEach(t => { if (t && !disposed) { textures.delete(t); t.dispose(); } });
+            return;
+          }
           if (backTexture) {
             backTexture.repeat.x *= -1;
             backTexture.offset.x = 1 - backTexture.offset.x;
@@ -995,23 +1011,32 @@ const PaperCrumple = ({
           frontMaterial.map = frontTexture;
           backMaterial.map = backTexture || frontTexture;
           depthMaterial.map = frontTexture;
-          frontMaterial.needsUpdate = backMaterial.needsUpdate = depthMaterial.needsUpdate = true;
+          // only the first map changes the shader (null -> texture); later swaps are a uniform change, no recompile
+          if (first) frontMaterial.needsUpdate = backMaterial.needsUpdate = depthMaterial.needsUpdate = true;
+          liveTextures.forEach(t => { textures.delete(t); t.dispose(); });
+          liveTextures = [frontTexture, backTexture].filter(Boolean);
           ready = true;
           setStatus('ready');
           hit.disabled = options.current.disabled;
           wake();
         })
         .catch(error => {
-          if (disposed) return;
+          if (disposed || mine !== token) return;
           setStatus('error');
           options.current.onError?.(error);
         });
+    };
+    swapRef.current = (nextSrc, nextBack) => { if (nextSrc) apply(nextSrc, nextBack); };
+    const initial = srcRef.current;
+    if (initial.src) {
+      apply(initial.src, initial.backSrc);
     } else {
       setStatus('error');
       options.current.onError?.(new Error('PaperCrumple requires an image src.'));
     }
     return () => {
       disposed = true;
+      swapRef.current = null;
       cancelAnimationFrame(frame);
       if (pointerId !== null && hit.hasPointerCapture(pointerId)) hit.releasePointerCapture(pointerId);
       resetRef.current = cancelRef.current = null;
@@ -1043,8 +1068,6 @@ const PaperCrumple = ({
       renderer.forceContextLoss(); // release the GL context now (Prints re-creates 3 papers every 6 s; browsers cap live contexts)
     };
   }, [
-    src,
-    backSrc,
     width,
     height,
     imageFit,
@@ -1065,6 +1088,9 @@ const PaperCrumple = ({
   useEffect(() => {
     resetRef.current?.();
   }, [resetKey]);
+  useEffect(() => {
+    swapRef.current?.(src, backSrc);
+  }, [src, backSrc]);
   useEffect(() => {
     if (disabled) cancelRef.current?.();
   }, [disabled]);
