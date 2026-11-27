@@ -22,6 +22,7 @@ import Preloader from './components/Preloader'
 export default function App() {
   const [intro, setIntro] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !window.location.search.includes('nointro'))
   const [ready, setReady] = useState(!intro)
+  const [heroKey, setHeroKey] = useState(0)
   const [filter, setFilter] = useState('all')
   const [active, setActive] = useState(null)
   const [box, setBox] = useState(null) // { photos, index }
@@ -30,14 +31,15 @@ export default function App() {
   const close = useCallback(() => setActive(null), [])
   const onReady = useCallback(() => setReady(true), [])
   const onDone = useCallback(() => setIntro(false), [])
-  const replay = () => { window.scrollTo(0, 0); setReady(false); setIntro(true) }
+  const replay = () => { window.scrollTo(0, 0); setReady(false); setHeroKey((k) => k + 1); setIntro(true) }
 
   return (
     <>
       {intro && <Preloader onReady={onReady} onDone={onDone} />}
       <Nav />
       <main>
-        {ready ? <Hero onPick={setFilter} /> : <div className="min-h-[100svh] bg-ink" />}
+        {/* Hero mounts immediately (under the preloader) so its images/layout load during the intro; entrance plays on reveal */}
+        <Hero key={heroKey} play={ready} onPick={setFilter} />
         <Marquee />
         <Intro />
         <Award onPhoto={(photos, index) => setBox({ photos, index })} />

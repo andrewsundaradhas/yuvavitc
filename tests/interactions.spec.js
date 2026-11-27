@@ -11,6 +11,18 @@ test.describe('Preloader', () => {
     expect(session.clicks.length).toBeGreaterThan(0)
   })
 
+  test('hero is mounted under the preloader and revealed after it', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('button', { name: 'Skip intro' })).toBeVisible()
+    // hero DOM + LCP-priority photo are already there (loading) while the intro still covers the screen
+    const stall = page.locator('#top img[alt="Yuva VIT Chennai Team"]')
+    await expect(stall).toBeAttached()
+    await expect.poll(() => stall.evaluate((i) => i.complete && i.naturalWidth > 0), { timeout: 15_000 }).toBe(true)
+    await page.getByRole('button', { name: 'Skip intro' }).click()
+    await expect(page.getByRole('button', { name: 'Skip intro' })).toBeHidden({ timeout: 8_000 })
+    await expect(page.getByRole('button', { name: 'Filter events: Health' })).toBeVisible()
+  })
+
   test('?nointro shows content immediately', async ({ page }) => {
     await openSite(page)
     await expect(page.getByRole('button', { name: 'Skip intro' })).toHaveCount(0)
