@@ -33,9 +33,10 @@ export default function Intro() {
         </motion.h2>
       </div>
 
-      <div className="mt-16 grid grid-cols-2 border-y border-ink md:grid-cols-4">
+      {/* 4 columns only from lg: at tablet widths the 7.5rem counters ("100+") overflowed their quarter column (T1) */}
+      <div className="mt-16 grid grid-cols-2 border-y border-ink lg:grid-cols-4">
         {stats.map(({ from, to, suffix, label }, i) => (
-          <div key={label} className={`px-3 py-6 md:px-8 md:py-8 ${i % 2 === 1 ? 'border-l border-ink' : ''} ${i >= 2 ? 'border-t border-ink md:border-t-0 md:border-l' : ''}`}>
+          <div key={label} className={`px-3 py-6 md:px-8 md:py-8 ${i % 2 === 1 ? 'border-l border-ink' : ''} ${i >= 2 ? 'border-t border-ink lg:border-t-0 lg:border-l' : ''}`}>
             <div className="display-md text-6xl md:text-[7.5rem] md:leading-[.85] lg:text-[9rem]"><Counter from={from} to={to} suffix={suffix} /></div>
             <div className="eyebrow mt-2 text-charcoal">{label}</div>
           </div>
