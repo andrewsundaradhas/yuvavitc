@@ -60,7 +60,7 @@ export default function Hero({ onPick, play = true }) {
       </div>
 
       <motion.div drag dragDirectionLock dragMomentum={false} whileDrag={{ scale: 1.05, zIndex: 40 }} initial={{ opacity: 0, scale: 0.6, rotate: 0 }} animate={play ? { opacity: 1, scale: 1, rotate: 4 } : undefined} transition={{ type: 'spring', stiffness: 200, damping: 14, delay: 1.2 }}
-        className="sticker absolute right-[3%] top-[9%] z-30 w-28 cursor-grab touch-pan-y border-[4px] border-parchment bg-white p-1.5 active:cursor-grabbing sm:top-[11%] sm:w-52 sm:border-[6px] sm:p-3 lg:w-64">
+        className="sticker absolute right-[3%] top-[9%] z-[15] w-28 cursor-grab touch-pan-y border-[4px] border-parchment bg-white p-1.5 active:cursor-grabbing sm:top-[11%] sm:w-52 sm:border-[6px] sm:p-3 lg:w-64">
         <img {...imgProps('/img/yuva-team-stall.webp', '(min-width: 1024px) 256px, (min-width: 640px) 208px, 112px', { priority: true })} alt="Yuva VIT Chennai Team" draggable={false} className="aspect-[4/3] w-full object-cover" />
       </motion.div>
       <h1 className="sr-only">YUVA VIT Chennai</h1>

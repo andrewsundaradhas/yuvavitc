@@ -112,7 +112,9 @@ test.describe('Gallery', () => {
     await openSite(page)
     await scrollThrough(page)
     const gallery = page.locator('#gallery')
-    await gallery.scrollIntoViewIfNeeded()
+    // #gallery starts as a Deferred shell and is swapped for the real section on approach (improvement #4), so scroll
+    // by id in the page rather than holding an element handle that can be replaced mid-scroll
+    await page.evaluate(() => document.getElementById('gallery').scrollIntoView())
     await expect(gallery.getByRole('region', { name: 'Image carousel' })).toBeVisible()
     const frame = gallery.getByRole('group').first()
     await expect(frame).toBeAttached()
