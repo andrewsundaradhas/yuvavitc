@@ -6,7 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "playwright test",
+    "test:desktop": "playwright test --project=desktop-chrome",
+    "test:mobile": "playwright test --project=android-pixel --project=iphone-safari",
+    "test:perf": "playwright test perf.spec.js --project=desktop-chrome --project=android-pixel",
+    "test:report": "playwright show-report"
   },
   "dependencies": {
     "cors": "^2.8.6",
@@ -23,6 +28,7 @@
     "vgpu": "^0.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.2",
     "tailwindcss": "^4.3.3",
