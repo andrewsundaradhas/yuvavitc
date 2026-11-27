@@ -120,3 +120,31 @@ Every test attaches a `session-log` (all clicks with timestamp + label, console 
 
 ### Next checkpoint
 CP-002 comes after the next approved improvement.
+
+## CP-002 — Improvement #2: fresh baseline (2026-11-27, before any #2 change)
+Code: `f21f9e9` (improvement #1 complete; no application changes since). Build: `npm run build`, then a full suite at 3 workers.
+
+**Result: 121 passed / 11 failed (2 timed out) / 3 skipped, 12.0 min.**
+
+| Failure | Profile | Class |
+|---|---|---|
+| Payload budget: initial JS 401 KB > 250 KB | all 5 | Known (improvement #4/#5) |
+| LCP/hero vitals | desktop, Pixel | Known. Parallel-run values (7.4 s / 6.2 s) are inflated by load; see D-019 for the fair 1-worker method |
+| No horizontal overflow (80 px) | iPad | Known T1 (StaggeredMenu off-canvas) |
+| Hero domain sticker (timeout) | iPad | Known load flake (CP-000/CP-001) |
+| Section screenshots (timeout 60 s) | desktop | **New in this run.** Passed in CP-001; load-induced, nothing changed in app code |
+| All sections render, no console errors | iPad | **New in this run:** "There are too many active WebGL contexts on this page, the oldest context will be lost." (×12). This is a WebGL lifecycle issue (D-008 / improvement #4), not image-related |
+
+**Image payload (full scroll, unthrottled):** desktop 6.8 MB / 213 requests · Firefox 7.0 MB / 216 · Pixel 3.1 MB / 72 · iPhone 1.1 MB / 68 · iPad 1.4 MB / 83. 0 images > 300 KB.
+
+**Gallery probe** (`scratch/gallery-probe.mjs`, not committed: gallery-only image requests after scrolling to the gallery, 6 s settle, then 10 s drift and 2 drags):
+
+| Profile | Gallery images at page load | After viewing | After spinning | Gallery KB |
+|---|---|---|---|---|
+| desktop-chrome 1440 | 3 | **166** | 166 | **4,801** |
+| android-pixel | 3 | 19 | 19 | 631 |
+| iphone-safari | 3 | 22 | 25 | 870 |
+
+Finding: on desktop the `cylinder` ring shows **all 166 frames on screen at once** as roughly 65 px thumbnails, so every frame really is visible and native lazy loading correctly loads them all. A "load only near the front" window would leave visible frames blank. On phones (`panorama`) lazy loading already limits it to about 20 frames. Every other `<img>` already uses `imgProps` (srcset/sizes/width/height/lazy), which was delivered in #1 Phase 3 (D-018). → Scope question raised with the owner (see decision.md D-022).
+
+**Outcome (D-023):** the owner closed #2 as already delivered, and the desktop gallery weight moves to the D-021 curation. No application code changed in CP-002, so these results stand as the baseline for improvement #3.
