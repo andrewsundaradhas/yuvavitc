@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { domains, events } from '../data'
+import { domains, events, galleryHighlights } from '../data'
 import CircularCarousel from './ui/CircularCarousel'
 import { pick } from '../lib/img'
 
-export const allPhotos = events.flatMap((e) => e.photos.map((p) => ({ ...p, event: e.short, domain: e.domain })))
+// The ring shows the curated highlights (D-021); every photo stays in its event's modal.
+const bySrc = new Map(events.flatMap((e) => e.photos.map((p) => [p.src, { ...p, event: e.short, domain: e.domain }])))
+export const allPhotos = galleryHighlights.map((src) => bySrc.get(src)).filter(Boolean)
+const WORDS = { 24: 'Twenty-four', 25: 'Twenty-five', 26: 'Twenty-six', 27: 'Twenty-seven', 28: 'Twenty-eight', 29: 'Twenty-nine', 30: 'Thirty' }
 
 // Mount the carousel (and start fetching its frames) only when the gallery is within ~1 screen of the viewport.
 const useNear = (ref) => {
@@ -50,7 +53,7 @@ export default function Gallery({ onPhoto }) {
             <p className="eyebrow mb-4 text-teal">Moments</p>
             <h2 className="display-md text-[clamp(52px,8vw,122px)] leading-[.82] tracking-[-0.05em]">The <span className="opacity-40">Gallery</span></h2>
           </div>
-          <p className="max-w-xs text-xl text-bone">Twenty frames from a year of showing up.</p>
+          <p className="max-w-xs text-xl text-bone">{WORDS[allPhotos.length] ?? allPhotos.length} frames from a year of showing up.</p>
         </motion.div>
       </div>
       <div ref={stageRef} className="relative h-[430px] md:h-[600px]" style={{ color: '#e2dedb' }}>

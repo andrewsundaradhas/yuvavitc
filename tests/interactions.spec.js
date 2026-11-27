@@ -130,9 +130,14 @@ test.describe('Gallery', () => {
       return null
     })
     await expect.poll(findCard, { message: 'a visible gallery card', timeout: 10_000 }).not.toBeNull()
-    const pt = await findCard()
-    await page.mouse.click(pt.x, pt.y)
-    await expect(page.getByRole('dialog', { name: 'Photo viewer' })).toBeVisible({ timeout: 5_000 })
+    // the ring drifts (autoplay) between finding a card and clicking it, so a click can land in a gap: re-aim up to 3×
+    const viewer = page.getByRole('dialog', { name: 'Photo viewer' })
+    for (let i = 0; i < 3 && !(await viewer.isVisible()); i++) {
+      const pt = await findCard()
+      if (pt) await page.mouse.click(pt.x, pt.y)
+      await viewer.waitFor({ state: 'visible', timeout: 2_500 }).catch(() => {})
+    }
+    await expect(viewer).toBeVisible({ timeout: 5_000 })
     await page.getByRole('dialog', { name: 'Photo viewer' }).getByRole('button', { name: 'Close' }).click()
   })
 })

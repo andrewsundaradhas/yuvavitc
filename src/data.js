@@ -685,6 +685,42 @@ export const events = [
   },
 ]
 
+
+// Gallery ring highlights (D-021): 30 frames, one cover per event (4 events without a strong event photo are left out).
+// Edit freely: any photo src from `events` works. Every photo still appears in its own event's gallery.
+export const galleryHighlights = [
+  '/img/img-20260622-wa0088.webp',
+  '/img/img-8908.webp',
+  '/img/img-0695.webp',
+  '/img/yuva-sports-2026.webp',
+  '/img/hearts-together-2026.webp',
+  '/img/nanban-hover-2026.webp',
+  '/img/fitdecoded-2026.webp',
+  '/img/techno-club-expo-2026.webp',
+  '/img/missing-piece-2026.webp',
+  '/img/thithikum-diwali-2026.webp',
+  '/img/curtain-raiser-24-hover.webp',
+  '/img/vithaigal-24-hover.webp',
+  '/img/open-mic-24-1.webp',
+  '/img/code2career-24-hover.webp',
+  '/img/02-mime-performance-group-photo.webp',
+  '/img/drug-traffic-24-hover.webp',
+  '/img/gift-of-giving-24-hover-new.webp',
+  '/img/yuva-sports-24-hover.webp',
+  '/img/24-freshers-expo.webp',
+  '/img/16-core-reveal-team-introduction.webp',
+  '/img/56-first-responder-1.webp',
+  '/img/21-movie-screening-meesaya-murukku.webp',
+  '/img/29-kalvi-kondattam-1.webp',
+  '/img/11-thon-event-group-photo.webp',
+  '/img/42-agentic-ai-workshop-1.webp',
+  '/img/46-vibrance-expo-1.webp',
+  '/img/90-pongal-kondattam-1.webp',
+  '/img/49-only-founders-1.webp',
+  '/img/69-young-wings-1.webp',
+  '/img/thithikum-diwali-2025-hover.webp',
+]
+
 export const team = [
   // ─── 2024 – 2025 TENURE ───
   // Faculty Coordinators
