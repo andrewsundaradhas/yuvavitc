@@ -1040,6 +1040,7 @@ const PaperCrumple = ({
       textures.forEach(texture => texture.dispose());
       light.shadow.dispose();
       renderer.dispose();
+      renderer.forceContextLoss(); // release the GL context now (Prints re-creates 3 papers every 6 s; browsers cap live contexts)
     };
   }, [
     src,
