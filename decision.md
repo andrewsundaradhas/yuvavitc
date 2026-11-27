@@ -22,6 +22,8 @@ Make YUVA VIT Chennai's site **highly visually engaging and energetic**, respons
 | D-010 | 2026-11-27 | **Test matrix:** desktop Chrome 1440, Android Pixel 7, iPhone 14 (WebKit), desktop Firefox 1440, iPad. | Owner (Q&A) |
 | D-011 | 2026-11-27 | **Preview:** Playwright runs against the local `vite preview` build by default; set `BASE_URL` to test a Vercel preview URL once a branch is pushed. | Owner (Q&A) |
 | D-012 | 2026-11-27 | Playwright `@playwright/test` 1.56.1 added as a devDependency; tests live in `tests/`; reports are gitignored. | Setup |
+| D-013 | 2026-11-27 | **Audit before code:** finish the full Playwright baseline, create checkpoint.md (CP-000) and PROJECT_AUDIT.md, and propose the top 5 improvements. **Don't modify application code until the owner approves.** | Owner instruction |
+| D-014 | 2026-11-27 | Baseline failures were triaged into real bugs (perf budget, iPad overflow T1, lazy-anchor T2) and load-induced flakes (6/6 pass in isolation). Test timeouts are left untouched for now so the baseline is honest; re-evaluate after the image fix. | Baseline triage |
 
 ## Proposals awaiting owner approval
 _(Bigger design ideas go here before anything is built, per D-005.)_
@@ -32,3 +34,4 @@ _(Bigger design ideas go here before anything is built, per D-005.)_
 
 | Commit | Date | Description |
 |--------|------|-------------|
+| f7fb535 | 2026-11-27 | Add CLAUDE.md, decision.md, and a Playwright suite (5 browser/device projects; smoke, interaction and perf specs; click/session logging fixture). |
