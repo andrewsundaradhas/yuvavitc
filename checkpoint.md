@@ -148,3 +148,68 @@ Code: `f21f9e9` (improvement #1 complete; no application changes since). Build: 
 Finding: on desktop the `cylinder` ring shows **all 166 frames on screen at once** as roughly 65 px thumbnails, so every frame really is visible and native lazy loading correctly loads them all. A "load only near the front" window would leave visible frames blank. On phones (`panorama`) lazy loading already limits it to about 20 frames. Every other `<img>` already uses `imgProps` (srcset/sizes/width/height/lazy), which was delivered in #1 Phase 3 (D-018). → Scope question raised with the owner (see decision.md D-022).
 
 **Outcome (D-023):** the owner closed #2 as already delivered, and the desktop gallery weight moves to the D-021 curation. No application code changed in CP-002, so these results stand as the baseline for improvement #3.
+
+## CP-003 — Improvement #3: preloader (2026-11-27)
+Commits: `458dc6f` (step 1), `dbe00cd` (step 2). Compared against the CP-002 baseline (`f21f9e9`).
+
+### How the preloader worked (findings, before any change)
+- **Entirely timer-driven.** It doesn't wait for any asset, and the 000→100 counter is cosmetic: a 4.6 s `animate()`. Timeline from when the app mounts:
+  - Blueprint scene 0–1.8 s
+  - Cream "YUVA" slam 1.8–2.65 s
+  - Stickers 2.65–4.6 s
+  - Auto-exit at 4.6 s, then five colour shutters
+  - `onReady` (Hero mounts) at **5.28 s**
+  - Overlay removed at **6.55 s**
+
+  So it's about 5.3 s until the Hero exists, not about 2 s.
+- **The Hero wasn't mounted during the intro.** `App` rendered a `min-h-[100svh] bg-ink` placeholder until `onReady`, so the Hero's images, fonts and layout only *started* loading after 5.3 s, and LCP landed at about 7.3 s.
+- **It played on every visit**, repeat visits included. Nothing was remembered.
+- **Under 4× CPU the scripted 5.3 s stretches to about 9.5–10 s.** The intro's own animation load (many springs, confetti, a 72-tick rotating SVG) delays the timers.
+- **Before the intro can paint, the screen is blank.** It lasts 0.6–0.8 s fast and 3.4–4.6 s throttled on a first visit, because the preloader lives inside the 401 KB React bundle, and module scripts also wait for the render-blocking Google Fonts CSS. That's JS and fonts (improvements #4/#5), not the preloader itself.
+- **Cause breakdown:** mostly **intentional timing**, then **the Hero being gated behind the timer**, then **JS/font loading** (before the intro starts only).
+
+### Changes (smallest safe set; no visual change)
+1. **Hero mounts immediately under the preloader** (`App.jsx`, `Hero.jsx`). The Hero's 5 entrance animations are held at their start pose (`play=false`) and play when the shutters lift. A timeline probe confirmed the look is unchanged: YUVA sits at opacity 0 / y=140 until the reveal, then animates in, and the stickers drop as before. Replay remounts the Hero so the entrance replays too.
+2. **The intro plays on the first visit only** (D-006). `localStorage['yuva:intro-seen']` is set when the intro starts, wrapped in try/catch for private mode. Footer "Replay intro" still plays it.
+
+### Before → after (`scratch/preloader-probe.mjs`, median of 3, ms from navigation)
+| Profile | Visit | Hero mounted | Preloader gone | LCP |
+|---|---|---|---|---|
+| desktop fast | first | 6,149 → **615** | 7,402 → 7,213 | 7,400 → **5,992** |
+| desktop fast | repeat | 6,053 → **389** | 7,325 → **no intro** | 7,304 → **1,668** |
+| desktop throttled | first | 13,905 → **2,668** | 13,905 → **11,667** | 13,612 → **11,712** |
+| desktop throttled | repeat | 11,243 → **1,062** | 11,884 → **no intro** | 11,972 → **4,172** |
+| Pixel fast | first | 6,039 → **530** | 7,289 → 7,114 | 7,300 → **6,016** |
+| Pixel fast | repeat | 5,635 → **582** | 6,896 → **no intro** | 5,748 → **1,832** |
+| Pixel throttled | first | 13,884 → **2,518** | 14,197 → **10,802** | 13,240 → **10,836** |
+| Pixel throttled | repeat | 11,071 → **829** | 11,071 → **no intro** | 1,340\* → 4,368 |
+
+\*Not a real regression: before the change, LCP on a repeat visit sometimes recorded the preloader's own text (1.3 s), not the Hero. After, the Hero is the real LCP element.
+First-visit throttled reveal comes about 2–3.4 s earlier, because the Hero's work now overlaps the intro instead of following it.
+
+### Full suite (3 workers): **132 passed / 10 failed (1 timed out) / 3 skipped, 10.0 min** (CP-002: 121 / 11 / 3, 12.0 min)
+4 new preloader tests were added, so the total is 145 tests (was 135). Remaining failures:
+- JS budget ×5 (known; #4/#5)
+- LCP desktop and Pixel (known)
+- iPad overflow T1 (known)
+- iPad hero sticker timeout (known flake)
+- **Firefox gallery lightbox** (new in this run but pre-existing: the original build fails it 3/6 in an A/B rerun, the new build 1/6; untouched by #3)
+
+The CP-002 desktop-screenshot timeout and iPad WebGL-context console error didn't recur in this run.
+- **Fair vitals** (`?nointro` path; 1 worker × 3, A/B in the same session):
+
+  | Profile | Metric | Original (`f21f9e9`) | New (`dbe00cd`) |
+  |---|---|---|---|
+  | Desktop | LCP | 3,724–3,864 ms | 3,744–3,928 ms |
+  | Desktop | CLS | 0.065 | 0.065 |
+  | Pixel | LCP | 3,744–3,848 ms | 3,760–3,960 ms |
+  | Pixel | CLS | 0.010–0.011 | 0.010–0.011 |
+
+  This path is unchanged, and the differences are within noise.
+- **Preloader tests:** 150/150 (6 repeats × 5 profiles, 3 workers).
+- **Test fix:** "Skip intro" now uses `dispatchEvent('click')`. A full actionability click raced the 4.6 s auto-exit on loaded WebKit; the original build timed out 2/18 on iPad.
+- **Edge case found and fixed:** marking the intro "seen" only at the end left a ~2 s window where a reload replayed it. It's now marked at the start.
+- **Pre-existing quirk (unchanged):** "Replay intro" pressed *during* the exit shutters is ignored.
+
+### Not done; needs owner approval (visual change)
+Shortening the intro itself (4.6 s scripted → about 2 s per D-006) changes the animation, so it's proposed as P-005.
