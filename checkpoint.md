@@ -213,3 +213,51 @@ The CP-002 desktop-screenshot timeout and iPad WebGL-context console error didn'
 
 ### Not done; needs owner approval (visual change)
 Shortening the intro itself (4.6 s scripted → about 2 s per D-006) changes the animation, so it's proposed as P-005.
+
+## CP-004 — "Complete all": P-005, gallery curation, improvements #4 and #5, T1, Award stutter (2026-11-27)
+Commits:
+- `ad59d25` intro ~2 s
+- `b852ce7` gallery 30
+- `3b6f559` #4
+- `26a3f14` #5
+- `a1cfb7a` T1
+- `bcad11a` Award stutter + idle prefetch
+- `db1b669` tablet Health pill
+- `7c0d5d8` LCP-font preload (see decision.md D-027–D-035)
+
+### Before (CP-002) → after
+| Metric | CP-002 | CP-004 |
+|---|---|---|
+| Full suite (5 profiles, 3 workers) | 121 pass / 11 fail / 3 skip | **140 pass / 2 fail / 3 skip** (6.4 min) |
+| Initial JS (transfer) | 401 KB (budget ❌ ×5) | **202 KB** (budget ✅ ×5) |
+| LCP desktop, fair (1 worker ×3, throttled) | 3,724–3,864 ms | **3,484–3,496 ms** |
+| LCP Pixel, fair | 3,744–3,848 ms | **2,772–2,832 ms** |
+| CLS desktop / Pixel | 0.065 / 0.011 | **0 / 0** |
+| Hero visible desktop / Pixel (fair) | ~3.4 s / ~3.9 s | ~3.5 s / ~3.8 s |
+| First-visit intro | 4.6 s scripted (+ shutters) | **~2.1 s** (+ shutters), same sequence |
+| Gallery ring (desktop) | 166 frames, 4.8 MB, ~65 px cards | **30 frames, 0.86 MB, ~190 px cards** |
+| Third-party requests | Google Fonts CSS + 9 font files | **0** (self-hosted) |
+| iPad horizontal overflow | 80 px ❌ | **0** ✅ |
+| iPad "Health" pill | hidden under the team photo, untappable ❌ | tappable ✅ |
+| iPad "too many WebGL contexts" console error | yes (CP-002) | not seen (PaperCrumple releases contexts) |
+| Award section frame time (1920×1080, mouse moving) | avg 14.4 ms, p95 27.3 ms, 6 long frames | **avg 9.5 ms, p95 13.6 ms, 0 long frames** |
+| Award, 4× CPU | avg 84.5 ms | avg 34.9 ms |
+
+### Remaining failures (2)
+- LCP budget (2.5 s) on desktop and Pixel under the throttled profile. It improved, but it's still over: the hero "YUVA" needs the 202 KB JS bundle and the Bodoni face over a 1.6 Mbps / 4× CPU link. Next levers, as proposals: server-render or inline the static hero; smaller framer-motion usage on first paint.
+
+### Watch list (flakes seen under 3-worker load, pass in isolation)
+- Query form "Send another query", WebKit: 2 failures in ~45 runs; 20/20 isolated.
+- Firefox gallery lightbox: fixed by re-aiming (30/30).
+- iPad hero sticker test: **was a real bug** (pill under the photo), now fixed.
+
+### Test changes
+- Skip test uses Playwright's fake clock.
+- Hero and repeat-visit tests let the intro end on its own.
+- Gallery test re-aims and scrolls by id (Deferred shells).
+- Probes are in `scratch/` (not committed): `preloader-probe`, `gallery-probe`, `award-fps`, `award-reveal`, `overflow*`, `fonts-check`.
+
+### Owner review notes
+- The gallery list is `galleryHighlights` in `src/data.js`. Swap any src to change the ring.
+- On Vercel, `og:image`/`og:url` become absolute when `VERCEL_PROJECT_PRODUCTION_URL` is exposed (default), or set `SITE_URL`.
+- The preview runs at http://localhost:4175 (`vite preview`), built from the latest commit.
