@@ -5,7 +5,9 @@ test.describe('Preloader', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' })
     const skip = page.getByRole('button', { name: 'Skip intro' })
     await expect(skip).toBeVisible()
-    await skip.click()
+    // The intro auto-exits after 4.6s; a full actionability click can lose that race on a loaded WebKit runner
+    // (CP-003: 2/18 timeouts on the original build). Fire the click as soon as the button is visible.
+    await skip.dispatchEvent('click')
     await expect(skip).toBeHidden({ timeout: 8_000 })
     await expect(page.locator('#top')).toBeVisible()
     expect(session.clicks.length).toBeGreaterThan(0)
@@ -17,10 +19,22 @@ test.describe('Preloader', () => {
     // hero DOM + LCP-priority photo are already there (loading) while the intro still covers the screen
     const stall = page.locator('#top img[alt="Yuva VIT Chennai Team"]')
     await expect(stall).toBeAttached()
-    await expect.poll(() => stall.evaluate((i) => i.complete && i.naturalWidth > 0), { timeout: 15_000 }).toBe(true)
-    await page.getByRole('button', { name: 'Skip intro' }).click()
+    expect(await stall.evaluate((i) => i.currentSrc), 'photo request started under the intro').toContain('/img/yuva-team-stall')
+    await page.getByRole('button', { name: 'Skip intro' }).dispatchEvent('click') // see note in the first test
     await expect(page.getByRole('button', { name: 'Skip intro' })).toBeHidden({ timeout: 8_000 })
     await expect(page.getByRole('button', { name: 'Filter events: Health' })).toBeVisible()
+    await expect.poll(() => stall.evaluate((i) => i.complete && i.naturalWidth > 0), { timeout: 15_000 }).toBe(true)
+  })
+
+  test('repeat visit skips the intro; Replay intro still plays it', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: 'Skip intro' }).dispatchEvent('click') // see note in the first test
+    await expect(page.getByRole('button', { name: 'Skip intro' })).toBeHidden({ timeout: 8_000 })
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('button', { name: 'Filter events: Health' })).toBeVisible()
+    await expect(page.locator('[aria-label="Loading Yuva VIT Chennai"]')).toHaveCount(0) // no intro at all on the repeat visit
+    await page.getByRole('button', { name: 'Replay intro' }).click()
+    await expect(page.getByRole('button', { name: 'Skip intro' })).toBeVisible()
   })
 
   test('?nointro shows content immediately', async ({ page }) => {

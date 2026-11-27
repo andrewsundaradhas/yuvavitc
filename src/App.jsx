@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { events } from './data'
 import Nav from './components/Nav'
@@ -19,8 +19,13 @@ import Footer from './components/Footer'
 import Queries from './components/Queries'
 import Preloader from './components/Preloader'
 
+// The intro plays on the first visit only (D-006); "Replay intro" in the footer still plays it on demand.
+const INTRO_SEEN = 'yuva:intro-seen'
+const introSeen = () => { try { return localStorage.getItem(INTRO_SEEN) === '1' } catch { return false } }
+const markIntroSeen = () => { try { localStorage.setItem(INTRO_SEEN, '1') } catch { /* private mode: intro just plays again */ } }
+
 export default function App() {
-  const [intro, setIntro] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !window.location.search.includes('nointro'))
+  const [intro, setIntro] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !window.location.search.includes('nointro') && !introSeen())
   const [ready, setReady] = useState(!intro)
   const [heroKey, setHeroKey] = useState(0)
   const [filter, setFilter] = useState('all')
@@ -31,6 +36,7 @@ export default function App() {
   const close = useCallback(() => setActive(null), [])
   const onReady = useCallback(() => setReady(true), [])
   const onDone = useCallback(() => setIntro(false), [])
+  useEffect(() => { if (intro) markIntroSeen() }, [intro]) // seen as soon as it starts: a quick reload never replays it
   const replay = () => { window.scrollTo(0, 0); setReady(false); setHeroKey((k) => k + 1); setIntro(true) }
 
   return (
