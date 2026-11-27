@@ -4,6 +4,7 @@ import { events } from './data'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Intro from './components/Intro'
+import Award from './components/Award'
 const About = lazy(() => import('./components/About'))
 const Tide = lazy(() => import('./components/Tide'))
 const PrintTable = lazy(() => import('./components/PrintTable'))
@@ -11,6 +12,7 @@ import Marquee from './components/Marquee'
 import Events from './components/Events'
 import EventModal from './components/EventModal'
 import Domains from './components/Domains'
+import Team from './components/Team'
 const Gallery = lazy(() => import('./components/Gallery'))
 import Lightbox from './components/Lightbox'
 import Footer from './components/Footer'
@@ -38,11 +40,13 @@ export default function App() {
         {ready ? <Hero onPick={setFilter} /> : <div className="min-h-[100svh] bg-ink" />}
         <Marquee />
         <Intro />
+        <Award onPhoto={(photos, index) => setBox({ photos, index })} />
         <Suspense fallback={<div className="min-h-[600px] bg-[#ffd80c]" />}>
           <About />
         </Suspense>
         <Events filter={filter} setFilter={setFilter} onOpen={setActive} />
         <Domains onPick={setFilter} />
+        <Team />
         <Suspense fallback={<div className="min-h-[88svh] bg-[#050505]" />}>
           <Tide />
         </Suspense>

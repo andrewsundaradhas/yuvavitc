@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { domains } from '../data'
+import { domains, events } from '../data'
 import Counter from './Counter'
 
 const Pill = ({ src }) => (
@@ -7,6 +7,13 @@ const Pill = ({ src }) => (
 )
 
 export default function Intro() {
+  const momentsCount = events.reduce((sum, e) => sum + e.photos.length, 0)
+  const stats = [
+    { from: 0, to: events.length, label: 'Events' },
+    { from: 0, to: Object.keys(domains).length, label: 'Domains' },
+    { from: 0, to: momentsCount, label: 'Moments captured' },
+    { from: 1, to: 100, suffix: '+', label: 'Members' },
+  ]
   return (
     <section id="intro" className="mx-auto max-w-[1440px] px-5 py-16 md:px-10 md:py-28">
       <div className="grid gap-10 md:grid-cols-[1fr_1.6fr] md:gap-16">
@@ -21,15 +28,15 @@ export default function Intro() {
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="display-md text-[clamp(52px,8.2vw,128px)] leading-[.84] tracking-[-0.05em]">
-          Twelve <Pill src="/images/05-orphanage-visit-2024.webp" />events. <span className="opacity-35">Seven <Pill src="/images/17-local-tourist-visit-heritage-walk.webp" />domains.</span> One <Pill src="/images/18-entrepreneurship-session-speaker.webp" />community.
+          {events.length} <Pill src="/images/05-orphanage-visit-2024.webp" />events. <span className="opacity-35">{Object.keys(domains).length} <Pill src="/images/49-only-founders-1.webp" />domains.</span> One <Pill src="/images/56-first-responder-1.webp" />community.
         </motion.h2>
       </div>
 
-      <div className="mt-16 grid grid-cols-3 border-y border-ink">
-        {[[12, 'Events'], [Object.keys(domains).length, 'Domains'], [20, 'Moments captured']].map(([n, l], i) => (
-          <div key={l} className={`px-3 py-6 md:px-8 md:py-8 ${i ? 'border-l border-ink' : ''}`}>
-            <div className="display-md text-6xl md:text-[9rem] md:leading-[.85]"><Counter to={n} /></div>
-            <div className="eyebrow mt-2 text-charcoal">{l}</div>
+      <div className="mt-16 grid grid-cols-2 border-y border-ink md:grid-cols-4">
+        {stats.map(({ from, to, suffix, label }, i) => (
+          <div key={label} className={`px-3 py-6 md:px-8 md:py-8 ${i % 2 === 1 ? 'border-l border-ink' : ''} ${i >= 2 ? 'border-t border-ink md:border-t-0 md:border-l' : ''}`}>
+            <div className="display-md text-6xl md:text-[7.5rem] md:leading-[.85] lg:text-[9rem]"><Counter from={from} to={to} suffix={suffix} /></div>
+            <div className="eyebrow mt-2 text-charcoal">{label}</div>
           </div>
         ))}
       </div>

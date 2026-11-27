@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useAnimationControls } from 'framer-motion'
 import { Sticker, FIC } from './Sticker'
 
-// Queries are emailed to the inbox(es) below via FormSubmit (https://formsubmit.co).
-// Override with VITE_QUERY_ENDPOINT (e.g. your own Vercel function) if you ever move off FormSubmit.
-const RECIPIENT = 'aaathi241@gmail.com'
-const ENDPOINT = import.meta.env.VITE_QUERY_ENDPOINT || `https://formsubmit.co/ajax/${RECIPIENT}`
+// Queries are sent through the Vercel API using Resend.
+const RECIPIENT = 'yuvavitc@gmail.com'
+const ENDPOINT = '/api/queries'
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const MAX = 600
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -40,28 +39,28 @@ export default function Queries() {
   useEffect(() => () => { alive.current = false }, [])
 
   const post = async (q, replyTo) => {
-    if (trap) return // bot: pretend it worked, send nothing
+    if (trap) return;
+
     const res = await fetch(ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
       body: JSON.stringify({
         message: q,
-        ...(replyTo ? { email: replyTo, _replyto: replyTo } : {}),
-        name: replyTo || 'Website visitor',
-        page: location.href,
-        sentAt: new Date().toISOString(),
-        _subject: 'New query — Yuva VIT Chennai website',
-        _template: 'table',
-        _captcha: 'false',
-      }),
-    })
-    const data = await res.json().catch(() => ({}))
-    if (!res.ok || data.success === false || data.success === 'false') {
-      // e.g. FormSubmit before the recipient has clicked the "Activate Form" email
-      console.warn('[Queries] not delivered:', data.message || res.status)
-      throw new Error(data.message || 'send failed')
+        email: replyTo || '',
+        website: trap
+      })
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || !data.success) {
+      console.error('[Queries] Email failed:', data.message);
+      throw new Error(data.message || 'Failed to send query');
     }
-  }
+  };
 
   const submit = async () => {
     if (busy) return
@@ -148,7 +147,28 @@ export default function Queries() {
                     <label htmlFor="query-email" className="eyebrow mb-2 mt-5 block text-black/70">Your email <span className="normal-case tracking-normal text-black/45">(optional — so we can reply)</span></label>
                     <input id="query-email" type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); if (hint) setHint('') }} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); submit() } }} disabled={busy} placeholder="you@example.com"
                       className="block w-full rounded-[5px] border border-[#101010] bg-white px-4 py-3 font-round text-[17px] font-medium text-[#101010] outline-none transition placeholder:text-black/35 hover:bg-[#fffaf1] focus:border-2 focus:px-[15px] focus:py-[11px]" />
-                    <input type="text" name="website" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} className="absolute -left-[9999px] h-0 w-0 opacity-0" aria-hidden="true" />
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        position: 'absolute',
+                        width: 1,
+                        height: 1,
+                        overflow: 'hidden',
+                        clip: 'rect(0, 0, 0, 0)',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      <label htmlFor="website-check">Leave this field empty</label>
+                      <input
+                        id="website-check"
+                        type="text"
+                        name="website"
+                        value={trap}
+                        onChange={(e) => setTrap(e.target.value)}
+                        tabIndex={-1}
+                        autoComplete="new-password"
+                      />
+                    </div>
                     <div className="mt-5 flex flex-col-reverse gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
                       <p className={`font-round text-[15px] font-medium ${hint || phase === 'error' ? 'text-[#fd4b38]' : 'text-black/55'}`} aria-live="polite">
                         {phase === 'error' ? 'Couldn’t send that — please try again.' : hint || 'Enter to send · Shift + Enter for a new line'}

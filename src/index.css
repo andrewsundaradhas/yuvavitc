@@ -78,10 +78,10 @@ body {
 .yuva-menu .staggered-menu-header { height: 56px; padding: 0 clamp(20px, 3vw, 40px); }
 .yuva-menu .sm-toggle { font-family: var(--font-mono); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; font-weight: 400; }
 .yuva-menu .staggered-menu-panel { background: #e2dedb; backdrop-filter: none; padding: 6em 2em 2em; }
-.yuva-menu .sm-panel-item { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.05em; font-size: clamp(2.4rem, 4.2vw, 3rem); color: #1d1d1b; }
+.yuva-menu .sm-panel-item { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.03em; font-size: clamp(1.35rem, 2.2vw, 1.85rem); color: #1d1d1b; }
 .yuva-menu .sm-panel-list[data-numbering] .sm-panel-item::after { font-family: var(--font-mono); }
 .yuva-menu .sm-panel-item { padding-right: 2.2em; }
-.yuva-menu .sm-panel-list[data-numbering] .sm-panel-item::after { right: 0; top: 0.2em; font-size: 14px; }
+.yuva-menu .sm-panel-list[data-numbering] .sm-panel-item::after { right: 0; top: 0.25em; font-size: 12px; }
 
 /* ---- mobile polish ---- */
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }

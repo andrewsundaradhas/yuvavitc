@@ -15,8 +15,8 @@ const stickersPhone = [
   ['innov', 54, 41, -5], ['learn', 26, 49, -3], ['climate', 4, 57, 7], ['entrep', 40, 58, -6],
 ]
 const photoStickers = [
-  { src: '/images/16-core-reveal-team-introduction.webp', alt: 'Core Reveal', cls: 'left-[34%] top-[11%] w-24 sm:left-[27%] sm:top-[8%] sm:w-44 lg:w-56', rot: -7, color: '#d2e534' },
-  { src: '/images/11-thon-event-group-photo.webp', alt: 'Thon Event', cls: 'right-[4%] top-[48%] hidden sm:block sm:w-44 lg:w-56', rot: 5, color: '#89cdf3' },
+  { src: '/images/49-only-founders-1.webp', alt: 'Only Founders', cls: 'left-[34%] top-[11%] w-24 sm:left-[27%] sm:top-[8%] sm:w-44 lg:w-56', rot: -7, color: '#d2e534' },
+  { src: '/images/24-freshers-expo.webp', alt: 'Freshers Expo', cls: 'right-[4%] top-[48%] hidden sm:block sm:w-44 lg:w-56', rot: 5, color: '#89cdf3' },
 ]
 
 export default function Hero({ onPick }) {
@@ -59,7 +59,7 @@ export default function Hero({ onPick }) {
 
       <motion.div drag dragDirectionLock dragMomentum={false} whileDrag={{ scale: 1.05, zIndex: 40 }} initial={{ opacity: 0, scale: 0.6, rotate: 0 }} animate={{ opacity: 1, scale: 1, rotate: 4 }} transition={{ type: 'spring', stiffness: 200, damping: 14, delay: 1.2 }}
         className="sticker absolute right-[3%] top-[9%] z-30 w-28 cursor-grab touch-pan-y border-[4px] border-parchment bg-white p-1.5 active:cursor-grabbing sm:top-[11%] sm:w-52 sm:border-[6px] sm:p-3 lg:w-64">
-        <img src="/images/yuva-logo-original.jpg" alt="Yuva logo — Learning Beyond Education" draggable={false} className="w-full" />
+        <img src="/images/yuva-team-stall.webp" alt="Yuva VIT Chennai Team" draggable={false} className="aspect-[4/3] w-full object-cover" />
       </motion.div>
       <h1 className="sr-only">YUVA VIT Chennai</h1>
       <div className="relative z-10 flex flex-1 flex-col justify-end">

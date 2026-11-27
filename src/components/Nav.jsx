@@ -3,9 +3,11 @@ import { StaggeredMenu } from './ui/StaggeredMenu'
 
 const items = [
   { label: 'Home', ariaLabel: 'Back to the top', link: '#top' },
+  { label: 'Awards & Honors', ariaLabel: 'Club awards and honors', link: '#award' },
   { label: 'About', ariaLabel: 'About Yuva VIT Chennai', link: '#about' },
-  { label: 'Events', ariaLabel: 'See all twelve events', link: '#events' },
+  { label: 'Events', ariaLabel: 'See all sixteen events', link: '#events' },
   { label: 'Domains', ariaLabel: 'Browse the seven domains', link: '#domains' },
+  { label: 'Meet the Team', ariaLabel: 'Meet the team and core reveal', link: '#team' },
   { label: 'Prints', ariaLabel: 'The print table', link: '#prints' },
   { label: 'Gallery', ariaLabel: 'Photo gallery', link: '#gallery' },
   { label: 'Queries', ariaLabel: 'Send us a query', link: '#queries' },

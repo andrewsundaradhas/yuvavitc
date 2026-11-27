@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { domains, events, pad } from '../data'
+import { domains, events, tenures, pad } from '../data'
 
 export default function EventModal({ event, onClose, onNav, onPhoto }) {
   const d = domains[event.domain]
+  const t = tenures[event.tenure]
   const idx = events.findIndex((e) => e.n === event.n)
   const steps = event.instructions.reduce((a, s) => (Array.isArray(s) ? (a[a.length - 1].subs = s) : a.push({ text: s, subs: [] }), a), [])
 
@@ -38,7 +39,12 @@ export default function EventModal({ event, onClose, onNav, onPhoto }) {
           <div className="flex items-start gap-5">
             <span className="display-md text-7xl leading-none opacity-40 md:text-9xl">{pad(event.n)}</span>
             <div>
-              <span className="pill mb-3 inline-block bg-ink px-3 py-1 text-[11px] text-parchment">{d.name}</span>
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span className="pill inline-block bg-ink px-3 py-1 text-[11px] text-parchment">{d.name}</span>
+                <span className="pill inline-block border border-ink/30 bg-parchment/80 px-3 py-1 text-[11px] font-mono text-ink">
+                  Tenure {t?.label || event.tenure || '2025 – 2026'}
+                </span>
+              </div>
               <h3 className="display-md text-4xl leading-[.95] md:text-6xl">{event.title}</h3>
             </div>
           </div>
