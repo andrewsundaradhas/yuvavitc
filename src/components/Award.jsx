@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { Sticker, FIC } from './Sticker'
+import { imgProps } from '../lib/img'
 
 /**
  * Interactive golden starlight & constellation canvas background.
@@ -249,17 +250,17 @@ const OTHER_AWARDS = [
     accent: '#ffd80c',
     photos: [
       {
-        src: '/images/award-catalyst-college.jpg',
+        src: '/img/award-catalyst-college.webp',
         alt: 'Yuva Collaboration Catalyst Award 2025 — Student Welfare Office, VIT Chennai',
         label: 'Student Welfare Office, VIT Chennai',
       },
       {
-        src: '/images/award-catalyst-trophy.jpg',
+        src: '/img/award-catalyst-trophy.webp',
         alt: 'Yuva Collaboration Catalyst Award 2025 — Trophy',
         label: 'Award Trophy',
       },
       {
-        src: '/images/award-catalyst-chola.jpg',
+        src: '/img/award-catalyst-chola.webp',
         alt: 'Yuva Collaboration Catalyst Award 2025 — ITC Grand Chola',
         label: 'ITC Grand Chola · Yi Annual Session',
       },
@@ -275,12 +276,12 @@ const OTHER_AWARDS = [
     accent: '#d2e534',
     photos: [
       {
-        src: '/images/award-upcoming-stage.jpg',
+        src: '/img/award-upcoming-stage.webp',
         alt: 'Best Upcoming Institute Award — Yuva Felicitation Stage (2024-2025)',
         label: 'Yuva Felicitation · Stage',
       },
       {
-        src: '/images/award-upcoming-chola.jpg',
+        src: '/img/award-upcoming-chola.webp',
         alt: 'Best Upcoming Institute Award — ITC Grand Chola (2024-2025)',
         label: 'ITC Grand Chola',
       },
@@ -307,10 +308,9 @@ function HonorCard({ award, idx, onPhoto }) {
         aria-label={`View ${award.title} photos`}
       >
         <img
-          src={current.src}
+          {...imgProps(current.src, '(min-width: 768px) 45vw, 100vw')}
           alt={current.alt}
           className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.03]"
-          loading="lazy"
         />
         <div className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-3.5">
@@ -342,7 +342,7 @@ function HonorCard({ award, idx, onPhoto }) {
               title={p.label}
               aria-label={`Preview ${p.label}`}
             >
-              <img src={p.src} alt={p.alt} className="h-full w-full object-cover object-top" loading="lazy" />
+              <img {...imgProps(p.src, '160px')} alt={p.alt} className="h-full w-full object-cover object-top" />
             </button>
           )
         })}
@@ -389,7 +389,7 @@ function HonorCard({ award, idx, onPhoto }) {
 export default function Award({ onPhoto }) {
   const [imgError, setImgError] = useState(false)
   const photo = {
-    src: '/images/best-club-award.jpg',
+    src: '/img/best-club-award.webp',
     alt: 'YUVA VIT Chennai — Best Club Award in Social & Outreach Category (2025-2026)',
     label: 'Best Club Award · 2025–2026',
   }
@@ -561,11 +561,10 @@ export default function Award({ onPhoto }) {
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-[#ffd80c]/40 bg-[#1d1810]">
                 {!imgError ? (
                   <img
-                    src={photo.src}
+                    {...imgProps(photo.src, '(min-width: 1024px) 560px, 100vw')}
                     alt={photo.alt}
                     onError={() => setImgError(true)}
                     className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
-                    loading="eager"
                   />
                 ) : (
                   <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center">

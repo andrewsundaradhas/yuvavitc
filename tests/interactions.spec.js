@@ -87,7 +87,22 @@ test.describe('Gallery', () => {
     await expect(gallery.getByRole('region', { name: 'Image carousel' })).toBeVisible()
     const frame = gallery.getByRole('group').first()
     await expect(frame).toBeAttached()
-    await gallery.getByRole('region', { name: 'Image carousel' }).click({ position: { x: 0.5 * (await gallery.boundingBox()).width, y: 200 } })
+    await page.evaluate(() => document.querySelector('#gallery [aria-label="Image carousel"]').scrollIntoView({ block: 'center' }))
+    await page.waitForTimeout(3000) // let the "rise" intro finish, like a user watching it land
+    // click the centre of a card that is actually visible and on top (cylinder layouts have gaps between cards)
+    // scan the carousel area (centre-out) for a point where a card is the top-most element — what a user would click
+    const findCard = () => page.evaluate(() => {
+      const r = document.querySelector('#gallery [aria-label="Image carousel"]').getBoundingClientRect()
+      const cx = r.left + r.width / 2
+      for (let dy = 0.5; dy <= 0.95; dy += 0.03) for (const dx of [0, -0.05, 0.05, -0.1, 0.1, -0.2, 0.2]) {
+        const x = cx + dx * r.width, y = r.top + dy * r.height
+        if (y > 0 && y < innerHeight && document.elementFromPoint(x, y)?.closest('[data-cc-index]')) return { x, y }
+      }
+      return null
+    })
+    await expect.poll(findCard, { message: 'a visible gallery card', timeout: 10_000 }).not.toBeNull()
+    const pt = await findCard()
+    await page.mouse.click(pt.x, pt.y)
     await expect(page.getByRole('dialog', { name: 'Photo viewer' })).toBeVisible({ timeout: 5_000 })
     await page.getByRole('dialog', { name: 'Photo viewer' }).getByRole('button', { name: 'Close' }).click()
   })

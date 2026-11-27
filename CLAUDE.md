@@ -60,8 +60,14 @@ BASE_URL=https://<preview>.vercel.app npx playwright test   # test a Vercel prev
 - Record every commit (hash + description) in decision.md's commit log.
 - Write only inside this project folder. Never commit `.env*` (except `.env.example`), `dist/`, `.vercel/`, or test reports.
 
+## Images (pipeline — see decision.md D-016/D-018, ASSET_INVENTORY.md)
+- Site images live in `public/img/` as real WebP: `<slug>.webp` (largest, longest edge <= 1600px) + `<slug>-480.webp` / `<slug>-960.webp`. Sizes per image are in `src/imageManifest.json`.
+- **Adding a photo:** drop the original into `public/images/`, reference it as `/images/<file>` in data.js, then run:
+  `node scripts/image-inventory.mjs && node scripts/optimize-images.mjs && node scripts/rewrite-refs.mjs` — then delete the original (don't commit camera JPEGs).
+- In components, spread `imgProps(src, sizes, { eager, priority })` from [src/lib/img.js](src/lib/img.js) onto `<img>`; use `pick(src, px)` for CSS backgrounds, SVG `<image>` and WebGL textures.
+
 ## Performance rules
-- Images: real WebP/AVIF, max ~1600px wide, with `srcset`/`sizes`, `loading="lazy"` + `decoding="async"` below the fold, explicit `width`/`height` (or aspect-ratio) so nothing shifts. Hero images are eager with `fetchpriority="high"`.
+- Below-the-fold images lazy (default of `imgProps`); only Hero images eager; the LCP image gets `priority`.
 - No image file > 300 KB. Never commit raw camera JPEGs.
 - Keep the initial JS small: heavy/WebGL components go behind `lazy()` + an in-view trigger.
 - Throttle or `matchMedia` instead of raw `resize` listeners.

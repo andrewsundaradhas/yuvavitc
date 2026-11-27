@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
 import { domains, events } from '../data'
 import Counter from './Counter'
+import { pick } from '../lib/img'
 
 const Pill = ({ src }) => (
-  <span className="mx-[0.08em] inline-block h-[0.6em] w-[1.5em] -translate-y-[0.02em] rounded-full bg-cover bg-center align-baseline" style={{ backgroundImage: `url(${src})` }} role="presentation" />
+  <span className="mx-[0.08em] inline-block h-[0.6em] w-[1.5em] -translate-y-[0.02em] rounded-full bg-cover bg-center align-baseline" style={{ backgroundImage: `url(${pick(src, 480)})` }} role="presentation" />
 )
 
 export default function Intro() {
@@ -28,7 +29,7 @@ export default function Intro() {
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="display-md text-[clamp(52px,8.2vw,128px)] leading-[.84] tracking-[-0.05em]">
-          {events.length} <Pill src="/images/05-orphanage-visit-2024.webp" />events. <span className="opacity-35">{Object.keys(domains).length} <Pill src="/images/49-only-founders-1.webp" />domains.</span> One <Pill src="/images/56-first-responder-1.webp" />community.
+          {events.length} <Pill src="/img/05-orphanage-visit-2024.webp" />events. <span className="opacity-35">{Object.keys(domains).length} <Pill src="/img/49-only-founders-1.webp" />domains.</span> One <Pill src="/img/56-first-responder-1.webp" />community.
         </motion.h2>
       </div>
 

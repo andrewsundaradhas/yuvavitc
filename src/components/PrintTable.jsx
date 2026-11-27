@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { domains, events } from '../data'
 import PaperCrumple from './ui/PaperCrumple'
 import { Sticker, FIC } from './Sticker'
+import { pick as pickImg } from '../lib/img'
 
 const SLOTS = [
   { rotation: -3, ouch: ['OUCH!', 'EEK!', 'NOOO!'] },
@@ -74,7 +75,7 @@ export default function PrintTable() {
               <motion.figure key={p.slug} initial={{ opacity: 0, y: 50, rotate: n % 2 ? 2 : -2 }} whileInView={{ opacity: 1, y: 0, rotate: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ type: 'spring', stiffness: 120, damping: 14, delay: n * 0.1 }}
                 className="relative rounded-[15px]" style={{ background: FIC.cream }}>
                 <PaperCrumple
-                  src={p.e.photos[0].src} alt={p.e.photos[0].alt} width={350} height={265} sceneHeight={stage} rotation={p.rotation}
+                  src={pickImg(p.e.photos[0].src, 700)} alt={p.e.photos[0].alt} width={350} height={265} sceneHeight={stage} rotation={p.rotation}
                   releaseBehavior="creased" crumpleAmount={0.9} creaseStrength={0.2} foldCount={7} detail={56}
                   paperColor="#f4f0e8" dragRadius={60} returnToOrigin resetKey={resetKey} onStateChange={react(p)}
                 />
