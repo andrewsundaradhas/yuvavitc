@@ -2,13 +2,16 @@ import { test, expect, openSite, scrollThrough } from './fixtures.js'
 
 test.describe('Preloader', () => {
   test('intro plays and "Skip intro" reveals the hero', async ({ page, session }) => {
+    // Fake clock: the intro is ~2 s and would otherwise race the click on a loaded runner. Time only moves when we
+    // say so, so "gone after 0.8 s" proves Skip worked (the auto-exit would need 2.07 s + shutters).
+    await page.clock.install()
     await page.goto('/', { waitUntil: 'domcontentloaded' })
     const skip = page.getByRole('button', { name: 'Skip intro' })
     await expect(skip).toBeVisible()
-    // The intro auto-exits after 4.6s; a full actionability click can lose that race on a loaded WebKit runner
-    // (CP-003: 2/18 timeouts on the original build). Fire the click as soon as the button is visible.
     await skip.dispatchEvent('click')
+    await page.clock.runFor(800)
     await expect(skip).toBeHidden({ timeout: 8_000 })
+    await page.clock.runFor(2000)
     await expect(page.locator('#top')).toBeVisible()
     expect(session.clicks.length).toBeGreaterThan(0)
   })
@@ -20,16 +23,16 @@ test.describe('Preloader', () => {
     const stall = page.locator('#top img[alt="Yuva VIT Chennai Team"]')
     await expect(stall).toBeAttached()
     expect(await stall.evaluate((i) => i.currentSrc), 'photo request started under the intro').toContain('/img/yuva-team-stall')
-    await page.getByRole('button', { name: 'Skip intro' }).dispatchEvent('click') // see note in the first test
-    await expect(page.getByRole('button', { name: 'Skip intro' })).toBeHidden({ timeout: 8_000 })
+    // let the (~2 s) intro end on its own — this test is about the hero, the first test covers Skip
+    await expect(page.locator('[aria-label="Loading Yuva VIT Chennai"]')).toHaveCount(0, { timeout: 15_000 })
     await expect(page.getByRole('button', { name: 'Filter events: Health' })).toBeVisible()
     await expect.poll(() => stall.evaluate((i) => i.complete && i.naturalWidth > 0), { timeout: 15_000 }).toBe(true)
   })
 
   test('repeat visit skips the intro; Replay intro still plays it', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' })
-    await page.getByRole('button', { name: 'Skip intro' }).dispatchEvent('click') // see note in the first test
-    await expect(page.getByRole('button', { name: 'Skip intro' })).toBeHidden({ timeout: 8_000 })
+    await expect(page.getByRole('button', { name: 'Skip intro' })).toBeVisible() // first visit: intro plays
+    await expect(page.locator('[aria-label="Loading Yuva VIT Chennai"]')).toHaveCount(0, { timeout: 15_000 })
     await page.reload({ waitUntil: 'domcontentloaded' })
     await expect(page.getByRole('button', { name: 'Filter events: Health' })).toBeVisible()
     await expect(page.locator('[aria-label="Loading Yuva VIT Chennai"]')).toHaveCount(0) // no intro at all on the repeat visit

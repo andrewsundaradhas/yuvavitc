@@ -9,6 +9,11 @@ const MOMENT_COUNT = events.reduce((sum, e) => sum + e.photos.length, 0)
 
 const C = { violet: '#8a53ff', coral: '#fd4b38', yellow: '#ffd80c', lime: '#3ccb09', cream: '#ffe9ce', ink: '#1d1d1b' }
 const EASE = [0.65, 0, 0.35, 1]
+// P-005: the intro scenes run at 0.45x their original timing (~2 s instead of 4.6 s); the exit shutters are unchanged.
+const SPEED = 0.45
+const T = (s) => +(s * SPEED).toFixed(3)
+// same spring shape, played faster: time scales with sqrt(m/k), so k / SPEED^2 and c / SPEED keep the damping ratio
+const spring = (stiffness, damping, extra = {}) => ({ type: 'spring', stiffness: stiffness / SPEED ** 2, damping: damping / SPEED, ...extra })
 const OUT = [0.16, 1, 0.3, 1]
 
 const star = (n, ro, ri) =>
@@ -24,7 +29,7 @@ function Hud({ dark, hidden, onSkip }) {
   const last = useRef(0)
   useEffect(() => {
     const c = animate(0, 100, {
-      duration: 4.6,
+      duration: T(4.6),
       ease: EASE,
       onUpdate: (x) => {
         const next = Math.round(x)
@@ -58,7 +63,7 @@ function Hud({ dark, hidden, onSkip }) {
         style={{ background: dark ? '#00b18c' : C.ink, willChange: 'transform' }}
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
-        transition={{ duration: 4.6, ease: EASE }}
+        transition={{ duration: T(4.6), ease: EASE }}
       />
     </div>
   )
@@ -67,39 +72,39 @@ function Hud({ dark, hidden, onSkip }) {
 /* ---------- Scene 1: blueprint + teal scan reveal (Scale x Allfeat) ---------- */
 function Blueprint({ leaving }) {
   const ticks = Array.from({ length: 72 })
-  const draw = (delay, d = 1.4) => ({ initial: { pathLength: 0 }, animate: { pathLength: 1 }, transition: { duration: d, delay, ease: EASE } })
+  const draw = (delay, d = 1.4) => ({ initial: { pathLength: 0 }, animate: { pathLength: 1 }, transition: { duration: T(d), delay: T(delay), ease: EASE } })
   return (
     <div className="absolute inset-0 overflow-hidden bg-[#050505]">
       <div className="absolute inset-0 opacity-[.07]" style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '56px 56px' }} />
-      <motion.div className="teal-wash absolute inset-0" style={{ willChange: 'opacity' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.6, delay: 0.6 }} />
+      <motion.div className="teal-wash absolute inset-0" style={{ willChange: 'opacity' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: T(1.6), delay: T(0.6) }} />
 
-      <motion.div className="absolute left-0 top-1/2 h-px w-full origin-center bg-white/25" style={{ willChange: 'transform' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, ease: EASE }} />
-      <motion.div className="absolute left-1/2 top-0 h-full w-px origin-center bg-white/25" style={{ willChange: 'transform' }} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ duration: 1, delay: 0.1, ease: EASE }} />
+      <motion.div className="absolute left-0 top-1/2 h-px w-full origin-center bg-white/25" style={{ willChange: 'transform' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: T(1), ease: EASE }} />
+      <motion.div className="absolute left-1/2 top-0 h-full w-px origin-center bg-white/25" style={{ willChange: 'transform' }} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ duration: T(1), delay: T(0.1), ease: EASE }} />
 
-      <motion.svg viewBox="-500 -500 1000 1000" className="absolute left-1/2 top-1/2 h-[min(125vh,125vw)] w-[min(125vh,125vw)] -translate-x-1/2 -translate-y-1/2" style={{ willChange: 'transform' }} animate={{ rotate: 140 }} transition={{ duration: 7, ease: 'linear' }}>
+      <motion.svg viewBox="-500 -500 1000 1000" className="absolute left-1/2 top-1/2 h-[min(125vh,125vw)] w-[min(125vh,125vw)] -translate-x-1/2 -translate-y-1/2" style={{ willChange: 'transform' }} animate={{ rotate: 140 }} transition={{ duration: T(7), ease: 'linear' }}>
         <motion.circle r="470" fill="none" stroke="rgba(255,255,255,.35)" strokeWidth="1.2" {...draw(0.1, 1.8)} />
         <motion.circle r="330" fill="none" stroke="rgba(0,177,140,.7)" strokeWidth="1.2" {...draw(0.4, 1.6)} />
-        <motion.circle r="210" fill="none" stroke="rgba(255,255,255,.2)" strokeWidth="1" strokeDasharray="3 9" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.8 }} />
-        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }}>
+        <motion.circle r="210" fill="none" stroke="rgba(255,255,255,.2)" strokeWidth="1" strokeDasharray="3 9" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: T(0.8), duration: T(0.8) }} />
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: T(0.5), duration: T(0.8) }}>
           {ticks.map((_, i) => (
             <line key={i} x1="0" x2="0" y1="-470" y2={i % 6 ? -454 : -436} stroke="rgba(255,255,255,.5)" strokeWidth="1.4" transform={`rotate(${i * 5})`} />
           ))}
         </motion.g>
       </motion.svg>
 
-      <motion.div className="absolute left-1/2 top-1/2 aspect-[1179/1158] h-[min(44vh,66vw)] -translate-x-1/2 -translate-y-1/2" style={{ willChange: 'transform, opacity' }} animate={leaving ? { scale: 0.4, rotate: -14, opacity: 0 } : {}} transition={{ duration: 0.8, ease: EASE }}>
+      <motion.div className="absolute left-1/2 top-1/2 aspect-[1179/1158] h-[min(44vh,66vw)] -translate-x-1/2 -translate-y-1/2" style={{ willChange: 'transform, opacity' }} animate={leaving ? { scale: 0.4, rotate: -14, opacity: 0 } : {}} transition={{ duration: T(0.8), ease: EASE }}>
         <div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/20 bg-[#00b18c]/[0.08]">
           <div className="flex h-full flex-col justify-center gap-[6%] px-[9%] font-mono text-white">
             {[[pad(EVENT_COUNT), 'Events'], [pad(DOMAIN_COUNT), 'Domains'], [pad(MOMENT_COUNT), 'Moments']].map(([n, l], i) => (
-              <motion.div key={l} className="flex items-baseline justify-between border-b border-white/20 pb-[4%]" style={{ willChange: 'transform, opacity' }} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.9 + i * 0.12, ease: OUT }}>
+              <motion.div key={l} className="flex items-baseline justify-between border-b border-white/20 pb-[4%]" style={{ willChange: 'transform, opacity' }} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: T(0.5), delay: T(0.9 + i * 0.12), ease: OUT }}>
                 <span className="text-[clamp(40px,8vh,84px)] font-light leading-none tracking-[-0.04em]">{n}</span>
                 <span className="text-[11px] uppercase tracking-[0.06em] text-white/70">{l}</span>
               </motion.div>
             ))}
           </div>
-          <motion.div className="pointer-events-none absolute inset-0 origin-top bg-[#050505]" style={{ willChange: 'transform' }} initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ duration: 0.9, delay: 0.7, ease: EASE }} />
+          <motion.div className="pointer-events-none absolute inset-0 origin-top bg-[#050505]" style={{ willChange: 'transform' }} initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ duration: T(0.9), delay: T(0.7), ease: EASE }} />
         </div>
-        <motion.div className="pointer-events-none absolute inset-0" style={{ willChange: 'transform, opacity' }} initial={{ y: '100%', opacity: 0 }} animate={{ y: '0%', opacity: [0, 1, 1, 0] }} transition={{ duration: 0.9, delay: 0.7, ease: EASE }}>
+        <motion.div className="pointer-events-none absolute inset-0" style={{ willChange: 'transform, opacity' }} initial={{ y: '100%', opacity: 0 }} animate={{ y: '0%', opacity: [0, 1, 1, 0] }} transition={{ duration: T(0.9), delay: T(0.7), ease: EASE }}>
           <div className="absolute -left-[6%] -right-[6%] top-0 h-[2px] bg-[#00b18c] shadow-[0_0_18px_4px_rgba(0,177,140,.7)]" />
         </motion.div>
 
@@ -108,10 +113,10 @@ function Blueprint({ leaving }) {
             <motion.path key={i} d={d} vectorEffect="non-scaling-stroke" {...draw(0.3 + i * 0.1, 0.8)} />
           ))}
         </svg>
-        <motion.div className="absolute -bottom-12 left-0 right-0 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.06em] text-white/70" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+        <motion.div className="absolute -bottom-12 left-0 right-0 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.06em] text-white/70" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: T(0.5) }}>
           <span className="h-px flex-1 bg-white/40" />Yuva · VIT Chennai<span className="h-px flex-1 bg-white/40" />
         </motion.div>
-        <motion.div className="absolute -left-12 bottom-0 top-0 flex flex-col items-center gap-3 font-mono text-[11px] uppercase tracking-[0.06em] text-white/70 [writing-mode:vertical-rl]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+        <motion.div className="absolute -left-12 bottom-0 top-0 flex flex-col items-center gap-3 font-mono text-[11px] uppercase tracking-[0.06em] text-white/70 [writing-mode:vertical-rl]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: T(0.6) }}>
           <span className="w-px flex-1 bg-white/40" />Event magazine<span className="w-px flex-1 bg-white/40" />
         </motion.div>
       </motion.div>
@@ -132,7 +137,7 @@ function Confetti() {
         <motion.span key={i} className="absolute block" style={{ width: b.w, height: b.round ? b.w : b.w * 0.5, background: b.c, borderRadius: b.round ? 999 : 2, willChange: 'transform, opacity' }}
           initial={{ x: 0, y: 0, scale: 0, rotate: 0, opacity: 1 }}
           animate={{ x: b.x, y: [0, b.y, b.y + b.drop], scale: [0, 1, 1], rotate: b.r, opacity: [1, 1, 0] }}
-          transition={{ duration: 1.5, delay: b.d, times: [0, 0.45, 1], ease: 'easeOut' }} />
+          transition={{ duration: T(1.5), delay: T(b.d), times: [0, 0.45, 1], ease: 'easeOut' }} />
       ))}
     </div>
   )
@@ -140,7 +145,7 @@ function Confetti() {
 
 /* ---------- Scene 3: stickers (Fictional x Eddie) ---------- */
 const Pop = ({ rot = 0, delay = 0, className = '', style, children }) => (
-  <motion.div className={`absolute ${className}`} style={{ ...style, willChange: 'transform, opacity' }} initial={{ scale: 0, rotate: rot - 50, opacity: 0 }} animate={{ scale: 1, rotate: rot, opacity: 1 }} transition={{ type: 'spring', stiffness: 420, damping: 11, delay }}>
+  <motion.div className={`absolute ${className}`} style={{ ...style, willChange: 'transform, opacity' }} initial={{ scale: 0, rotate: rot - 50, opacity: 0 }} animate={{ scale: 1, rotate: rot, opacity: 1 }} transition={spring(420, 11, { delay: T(delay) })}>
     {children}
   </motion.div>
 )
@@ -178,7 +183,7 @@ function Stickers() {
         const [l, t, r] = (typeof window !== 'undefined' && window.innerWidth < 640 ? pillSpotsMobile : pillSpots)[i]
         return (
           <motion.div key={d.name} className="absolute whitespace-nowrap rounded-full px-[clamp(12px,1.6vw,24px)] py-[clamp(5px,.7vw,10px)] font-round font-semibold text-ink" style={{ left: `${l}%`, top: `${t}%`, background: d.color, fontSize: 'clamp(12px,1.5vw,22px)' }}
-            initial={{ y: '-110vh', rotate: r * 5 }} animate={{ y: 0, rotate: r }} transition={{ type: 'spring', stiffness: 130, damping: 8, mass: 1.1, delay: 0.55 + i * 0.09 }}>
+            initial={{ y: '-110vh', rotate: r * 5 }} animate={{ y: 0, rotate: r }} transition={spring(130, 8, { mass: 1.1, delay: T(0.55 + i * 0.09) })}>
             {d.name}
           </motion.div>
         )
@@ -190,26 +195,26 @@ function Stickers() {
 /* ---------- Scene 2: cream tabletop, letter slam (Miranda) ---------- */
 function Slam({ stickers }) {
   const shake = useAnimationControls()
-  const hit = () => shake.start({ x: [0, -10, 8, -4, 1, 0], y: [0, 7, -5, 2, -1, 0], transition: { duration: 0.36, ease: 'easeOut' } })
+  const hit = () => shake.start({ x: [0, -10, 8, -4, 1, 0], y: [0, 7, -5, 2, -1, 0], transition: { duration: T(0.36), ease: 'easeOut' } })
   const rots = [-18, 14, -11, 17]
   return (
     <>
-      <motion.div className="pointer-events-none absolute inset-0 z-30 bg-white" style={{ willChange: 'opacity' }} initial={{ opacity: 0.85 }} animate={{ opacity: 0 }} transition={{ duration: 0.45, delay: 0.25 }} />
-      <motion.div className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[160vmax] -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ background: C.cream, willChange: 'transform' }} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.8, ease: EASE }} />
+      <motion.div className="pointer-events-none absolute inset-0 z-30 bg-white" style={{ willChange: 'opacity' }} initial={{ opacity: 0.85 }} animate={{ opacity: 0 }} transition={{ duration: T(0.45), delay: T(0.25) }} />
+      <motion.div className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[160vmax] -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ background: C.cream, willChange: 'transform' }} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: T(0.8), ease: EASE }} />
       <motion.div className="absolute inset-0 overflow-hidden" style={{ willChange: 'transform' }} animate={shake}>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <motion.p className="eyebrow mb-4 text-ink" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>The Official Publication of</motion.p>
+          <motion.p className="eyebrow mb-4 text-ink" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: T(0.4) }}>The Official Publication of</motion.p>
           <h2 className="display flex text-ink" style={{ fontSize: 'clamp(110px,30vw,440px)' }} aria-label="YUVA">
             {'YUVA'.split('').map((ch, i) => (
               <span key={i} className="relative inline-block" aria-hidden="true">
                 <motion.span className="inline-block" style={{ willChange: 'transform' }} initial={{ y: '-115vh', rotate: rots[i] }} animate={{ y: 0, rotate: 0 }} onAnimationComplete={i === 3 ? hit : undefined}
-                  transition={{ type: 'spring', stiffness: 260, damping: 14, mass: 1, delay: 0.3 + i * 0.12 }}>{ch}</motion.span>
-                <motion.span className="pointer-events-none absolute bottom-[8%] left-1/2 aspect-square w-[70%] -translate-x-1/2 rounded-full border-[3px] border-ink" style={{ willChange: 'transform, opacity' }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 2.2], opacity: [0.55, 0] }} transition={{ duration: 0.7, delay: 0.3 + i * 0.12 + 0.5, ease: 'easeOut' }} />
+                  transition={spring(260, 14, { mass: 1, delay: T(0.3 + i * 0.12) })}>{ch}</motion.span>
+                <motion.span className="pointer-events-none absolute bottom-[8%] left-1/2 aspect-square w-[70%] -translate-x-1/2 rounded-full border-[3px] border-ink" style={{ willChange: 'transform, opacity' }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 2.2], opacity: [0.55, 0] }} transition={{ duration: T(0.7), delay: T(0.3 + i * 0.12 + 0.5), ease: 'easeOut' }} />
               </span>
             ))}
           </h2>
           <div className="overflow-hidden" style={{ marginTop: '-0.04em' }}>
-            <motion.div className="display text-ember" style={{ fontSize: 'clamp(44px,8.4vw,128px)', willChange: 'transform' }} initial={{ y: '115%' }} animate={{ y: 0 }} transition={{ duration: 0.7, delay: 0.95, ease: OUT }}>VIT Chennai</motion.div>
+            <motion.div className="display text-ember" style={{ fontSize: 'clamp(44px,8.4vw,128px)', willChange: 'transform' }} initial={{ y: '115%' }} animate={{ y: 0 }} transition={{ duration: T(0.7), delay: T(0.95), ease: OUT }}>VIT Chennai</motion.div>
           </div>
         </div>
         {stickers && <Stickers />}
@@ -245,9 +250,9 @@ export default function Preloader({ onReady, onDone }) {
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
-    at(1800, () => setStage(1))
-    at(2650, () => setStage(2))
-    at(4600, exit)
+    at(1800 * SPEED, () => setStage(1))
+    at(2650 * SPEED, () => setStage(2))
+    at(4600 * SPEED, exit)
     return () => { timers.current.forEach(clearTimeout); document.body.style.overflow = '' }
   }, [exit])
 
