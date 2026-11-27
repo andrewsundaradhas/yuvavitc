@@ -57,5 +57,66 @@ Largest single images: `53-only-founders-5.webp` 15.1 MB, `52-only-founders-4.we
 ### Click/session tracking
 Every test attaches a `session-log` (all clicks with timestamp + label, console errors, page errors, failed requests) to the HTML report. Baseline: **no uncaught page errors and no 4xx/5xx asset responses** were recorded in any passing smoke run.
 
+> **Correction (added at CP-001):** the CP-000 throttled vitals above (LCP 5.0 s / 4.5 s, Hero 5.2 s / 14.6 s) were measured with 3 parallel workers competing for the CPU, so they're inflated. A fair re-measurement of the **same baseline code** (commit `41b6cd6`, built in a temporary worktree) with 1 worker, ×3 runs, gave: desktop LCP **3,620–3,700 ms**, Hero 3,333–3,574 ms; Pixel LCP **3,624–3,696 ms**, Hero 3,818–3,897 ms. CP-001 compares against these.
+
+---
+
+## CP-001 — Improvement #1: image optimization
+- **Date:** 2026-11-27 · **Commits under test:** `6cc6956` (optimize) + `392a6ac` (remove originals) · **Target:** local `vite preview` of the cleaned build
+- **Result:** ✅ 122 passed · ❌ 10 failed · ⏭ 3 skipped · ⏱ **10.1 min** (was 31.5 min)
+
+### Before → after
+| Metric | CP-000 (before) | CP-001 (after) | Change |
+|---|---|---|---|
+| `public/images` in repo / deploy output (`dist/`) | 1.24 GB / 1.3 GB | `public/img` 34 MB / `dist` **35 MB** | **−97%** |
+| Images per full scroll, desktop-chrome | 405 MB (240 req) | **6.1 MB** (207 req) | **−98.5%** |
+| Images per full scroll, android-pixel | 674 MB | **2.3 MB** | −99.7% |
+| Images per full scroll, iphone-safari | 673 MB | **1.1 MB** | −99.8% |
+| Images per full scroll, desktop-firefox | 666 MB | **6.8 MB** | −99% |
+| Images per full scroll, ipad | 672 MB | **1.1 MB** | −99.8% |
+| Largest single image | 15.1 MB | ≤ 298 KB (largest on disk) | −98% |
+| Images over 300 KB | 96–108 per profile | **0** | ✅ budget met |
+| Fake `.webp` (JPEG inside) | 76 | 0 | ✅ |
+| Gallery images before the user scrolls near it | all 166 frames | 0 (carousel mounts ~1 screen away) | ✅ |
+| Initial JS (transfer) | 398 KB | 401 KB (+3 KB image manifest) | ≈ (fix in #4) |
+| LCP, desktop (throttled, 1 worker ×3) | 3,620–3,700 ms | 3,712–3,744 ms | ≈ unchanged* |
+| LCP, Pixel (throttled, 1 worker ×3) | 3,624–3,696 ms | 3,684–3,772 ms | ≈ unchanged* |
+| Hero visible, desktop / Pixel | 3.3–3.6 s / 3.8–3.9 s | 3.4–3.5 s / 3.9 s | ≈ unchanged* |
+| CLS desktop / Pixel | 0.065 / 0.011 | 0.065 / 0.010 | ✅ unchanged |
+
+\* **Why LCP didn't move:** the LCP element is the giant "YUVA" headline, not a photo. First paint is held back by 401 KB of JS (parsed under 4× CPU throttling) and 8 font families. That's the work in improvements #3 (preloader), #4 (JS split) and #5 (fonts). Image optimization removes the hundreds of MB that used to compete for bandwidth *after* first paint, which is what users feel as "slow while scrolling", along with the data cost on mobile.
+
+### Functional results by component (after)
+| Component / flow | desktop-chrome | android-pixel | iphone-safari | desktop-firefox | ipad |
+|---|---|---|---|---|---|
+| All sections render, no JS errors | ✅ (was ⏱) | ✅ | ✅ | ✅ | ✅ |
+| No broken assets (4xx/5xx) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| No horizontal overflow | ✅ | ✅ | ✅ | ✅ | ❌ 80 px (T1, pre-existing) |
+| Every image has alt | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Section screenshots (render check) | ✅ (was ⏱) | ✅ (was ⏱) | ✅ (was ⏱) | ✅ (was ⏱) | ✅ (was ⏱) |
+| Preloader skip / `?nointro` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Menu → 9 links | ✅ (was ❌ Prints, Gallery) | ✅ (was ❌ Gallery) | ⚠ Gallery flaked once (see below) | ✅ | ✅ |
+| Events filters, modal, photo → lightbox | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Hero domain sticker → filters events | ✅ | ✅ | ✅ | ✅ | ⏱ (pre-existing flake) |
+| Gallery: carousel → click frame → lightbox | ✅ (was ⏱) | ✅ | ✅ | ✅ (was ⏱) | ✅ |
+| Query form: empty / invalid / success / error | ✅ | ✅ | ✅ | ✅ (was flaky) | ✅ |
+| Footer "Replay intro" | ✅ | ✅ | ✅ | ✅ | ✅ (was flaky) |
+
+### Remaining failures (10), triaged
+| Failure | Verdict |
+|---|---|
+| Initial JS 401 KB > 250 KB (all 5 profiles) | Real, pre-existing → improvement #4 |
+| LCP > 2,500 ms (desktop-chrome, android-pixel) | Real, pre-existing → improvements #3/#4/#5 |
+| iPad 80 px sideways scroll | Real, pre-existing (T1, menu CSS) |
+| iPad hero sticker → events timeout | Pre-existing flake (also in CP-000) |
+| iphone-safari menu → Gallery timeout | **Load flake, not a regression.** Re-checked: 18/18 passed isolated (×3 on both phones) and 50/52 passed in the full iPhone project ×2 with 3 parallel workers (the only failures were the JS budget). Watch it in CP-002. |
+
+### Visual verification
+- Desktop 1440 and Pixel 7 screenshots of the Hero, Awards, Team, event modal and lightbox: images are sharp and correctly oriented, aspect ratios and crops are unchanged, and there are **0 broken eager images**.
+- Side-by-side spot checks: an EXIF-rotated portrait (`27-freshers-expo-4`) and a quality-stepped crowd photo (`img-8410`) both look correct at display size.
+
+### Test changes in this checkpoint
+- The Gallery test now clicks a card that is actually visible after the "rise" intro settles. The old fixed coordinate landed in a gap between cylinder cards, which was a test bug: real users click a card and the lightbox opens on all 5 profiles.
+
 ### Next checkpoint
-CP-001 will be after the image pipeline (Top-5 #1) is implemented. Expected: images < 30 MB per scroll, no image > 300 KB, and the timeouts cleared.
+CP-002 comes after the next approved improvement.

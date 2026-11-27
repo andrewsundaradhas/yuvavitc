@@ -29,9 +29,13 @@ Make YUVA VIT Chennai's site **highly visually engaging and energetic**, respons
 | D-017 | 2026-11-27 | **The 24 unreferenced files with no duplicate twin** (Diwali 7–12, 2 team photos, Nanban, Pongal-6, drone photo, 13 older small WebPs) get **backed up to `D:\yuvavitc-image-backup` and then deleted** from the repo. Writing that one backup folder outside the project is explicitly authorized. | Owner (Q&A) |
 | D-018 | 2026-11-27 | **Responsive loading (Phase 3):** a `src/lib/img.js` helper (`imgProps`, `pick`, `srcSet`) is spread on existing `<img>` tags, so there are no markup or design changes. The Hero images are eager and the team-stall photo gets `fetchpriority="high"`; everything else is lazy, with intrinsic width/height. The Gallery carousel mounts only when within about 1 screen and uses one right-sized variant per frame (the carousel preloads `item.src`). PrintTable textures use the ~700px variant and the Intro pills the 480px one. Award's best-club image changed from eager to lazy (it's below the fold). | Phase 3 |
 
+| D-019 | 2026-11-27 | **Fair perf comparison:** throttled vitals are compared with 1 worker over 3 runs, against the baseline code rebuilt in a temporary worktree (removed afterwards). The CP-000 parallel-run vitals are marked inflated. The CP-001 iPhone "menu → Gallery" timeout is classified as a load flake (18/18 isolated, 50/52 under load with only budget failures) and stays on watch. | CP-001 triage |
+
 ## Proposals awaiting owner approval
 _(Bigger design ideas go here before anything is built, per D-005.)_
 - P-001 — Remove unused deps `express`, `cors`, `dotenv` (no imports found). Low risk.
+- P-003 — **Gallery density:** all 166 photos sit in one ring, so on desktop each card renders only about 65 px wide, and the copy still says "Twenty frames". Options: curate around 24–30 highlight photos for the ring (the rest stay reachable via events), or add per-event filtering. Content and design decision, so it needs approval.
+- P-004 — **Content check:** the first Roadyssey photo (`/img/img-20260622-wa0088.webp`) is a Google Meet screenshot showing participants' names and faces. Confirm it's OK to publish, or swap it.
 - P-002 — Cut the Google Fonts request from 8 families to the ones in use, and self-host or subset them.
 
 ## Commit log (branch `claude/perf-testing`)
@@ -39,4 +43,6 @@ _(Bigger design ideas go here before anything is built, per D-005.)_
 | Commit | Date | Description |
 |--------|------|-------------|
 | f7fb535 | 2026-11-27 | Add CLAUDE.md, decision.md, and a Playwright suite (5 browser/device projects; smoke, interaction and perf specs; click/session logging fixture). |
+| 6cc6956 | 2026-11-27 | **Improvement #1, part 1:** responsive WebP pipeline (scripts/, `public/img` 546 variants, `src/imageManifest.json`, `src/lib/img.js`), lazy/eager/priority loading, gallery mounts near the viewport, ASSET_INVENTORY.md, gallery test fix. Originals untouched. |
+| 392a6ac | 2026-11-27 | **Improvement #1, part 2 (cleanup):** removed all 329 files in `public/images` after reference checks and a full test run. Backup at `D:\yuvavitc-image-backup` (MD5-verified 329/329). No history rewrite. |
 | 41b6cd6 | 2026-11-27 | Add checkpoint.md (CP-000 baseline: 109 pass / 23 fail, perf metrics, triage) and PROJECT_AUDIT.md (findings + top-5 plan). No app code changed. |
