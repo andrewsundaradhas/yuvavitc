@@ -45,6 +45,7 @@ Make YUVA VIT Chennai's site **highly visually engaging and energetic**, respons
 | D-033 | 2026-11-27 | **Award stutter (owner report from the live preview):** the starlight canvas ran forever (even off-screen) at up to 2× resolution with a stroke per line, under backdrop-blur panels re-blurring it each frame. Fixed without visual change: pause off-screen/hidden, ≤1× resolution, lines batched into 4 opacity buckets, cheaper pair test, no backdrop-blur on the 2 big cards + 3 stat boxes. 1920×1080: avg 14.4 → 9.5 ms/frame, p95 27.3 → 13.6 ms, long frames 6 → 0. | Owner report |
 | D-034 | 2026-11-27 | Preview for the owner is served locally with `vite preview --port 4175` (latest build); nothing is pushed or deployed. | Owner request |
 | D-035 | 2026-11-27 | **Tablet hero bug:** the team-photo sticker (z-30) covered the "Health" domain pill at 640–1023 px; that was the real cause of the long-running iPad "hero sticker" test failure (not a flake). Photo goes to z-[15]. Also preload **only** the LCP font (Bodoni Moda); preloading Source Serif too slowed desktop LCP by ~0.5 s. | CP-004 |
+| D-036 | 2026-11-27 | **Owner: "show the preview, it should not lag".** Lag is measured on the real GPU (SwiftShader numbers are a test artifact). Prints' 6 s shuffle no longer rebuilds WebGL: PaperCrumple swaps textures, and PrintTable replays the drop-in per slot (same look). Every section runs at 60 fps on desktop and phone sizes (CP-004b). | Owner request |
 
 ## Proposals awaiting owner approval
 _(Bigger design ideas go here before anything is built, per D-005.)_
@@ -77,3 +78,6 @@ _(Bigger design ideas go here before anything is built, per D-005.)_
 | bcad11a | 2026-11-27 | **Award stutter fix** (canvas pause/resolution/batching, blur removal) + idle prefetch of deferred chunks. |
 | db1b669 | 2026-11-27 | Tablet Health pill no longer hidden under the team photo; gallery test scrolls by id. |
 | 14ae42c | 2026-11-27 | Preload only the LCP font (Bodoni Moda): desktop LCP 3.5 s, Pixel 2.8 s (fair), CLS 0. |
+| 4953711 | 2026-11-27 | Record CP-004 and decisions D-027–D-035. Docs only. |
+| fddc661 | 2026-11-27 | Correct a commit hash in docs. Docs only. |
+| 1adef22 | 2026-11-27 | **Prints lag fix:** texture swap instead of a WebGL rebuild every 6 s (930 ms freezes → ≤33 ms). |

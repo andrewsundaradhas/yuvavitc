@@ -261,3 +261,9 @@ Commits:
 - The gallery list is `galleryHighlights` in `src/data.js`. Swap any src to change the ring.
 - On Vercel, `og:image`/`og:url` become absolute when `VERCEL_PROJECT_PRODUCTION_URL` is exposed (default), or set `SITE_URL`.
 - The preview runs at http://localhost:4175 (`vite preview`), built from the latest commit.
+
+## CP-004b — Lag sweep on the real GPU (2026-11-27)
+**Method note:** default Playwright Chromium renders WebGL with SwiftShader (software), which made Domains/Team/Tide/Prints look 100–250 ms/frame. That's a test artifact, not what users get. Sweeps now launch with `--enable-gpu --use-angle=d3d11` (AMD Radeon, the same as the owner's browser). Probe: `scratch/sweep.mjs` (each section in view, mouse moving 2.5 s).
+- **Found and fixed (`1adef22`): Prints froze for ~0.9 s every 6 s.** The shuffle remounted 3 three.js scenes. PaperCrumple now builds once and swaps textures, and PrintTable keeps one figure per slot and replays the drop-in spring. Over 20 s the long frames went from 967/933/917 ms to a maximum of 33 ms. Crumple interaction, shuffle and captions were verified; no console errors; still 3 canvases.
+- **Result, 1920×1080 and 412×915:** every section averages 16.6–16.8 ms/frame (60 fps), with p95 ≤ 16.8 ms. A handful of long frames remain only when *jumping straight into* Prints or Gallery (they mount on arrival). In a normal scroll they mount ~1.5 screens early.
+- Smoke suite 25/25 (all 5 profiles).
