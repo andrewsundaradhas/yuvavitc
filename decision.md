@@ -76,4 +76,4 @@ _(Bigger design ideas go here before anything is built, per D-005.)_
 | a1cfb7a | 2026-11-27 | **T1:** iPad sideways scroll fixed (Intro stats 4-up only from lg). |
 | bcad11a | 2026-11-27 | **Award stutter fix** (canvas pause/resolution/batching, blur removal) + idle prefetch of deferred chunks. |
 | db1b669 | 2026-11-27 | Tablet Health pill no longer hidden under the team photo; gallery test scrolls by id. |
-| 7c0d5d8 | 2026-11-27 | Preload only the LCP font (Bodoni Moda): desktop LCP 3.5 s, Pixel 2.8 s (fair), CLS 0. |
+| 14ae42c | 2026-11-27 | Preload only the LCP font (Bodoni Moda): desktop LCP 3.5 s, Pixel 2.8 s (fair), CLS 0. |

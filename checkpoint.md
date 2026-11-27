@@ -223,7 +223,7 @@ Commits:
 - `a1cfb7a` T1
 - `bcad11a` Award stutter + idle prefetch
 - `db1b669` tablet Health pill
-- `7c0d5d8` LCP-font preload (see decision.md D-027–D-035)
+- `14ae42c` LCP-font preload (see decision.md D-027–D-035)
 
 ### Before (CP-002) → after
 | Metric | CP-002 | CP-004 |
