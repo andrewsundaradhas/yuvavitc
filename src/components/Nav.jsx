@@ -1,5 +1,6 @@
 import { motion, useScroll, useSpring } from 'framer-motion'
 import { StaggeredMenu } from './ui/StaggeredMenu'
+import { imgProps } from '../lib/img'
 
 const items = [
   { label: 'Home', ariaLabel: 'Back to the top', link: '#top' },
@@ -15,7 +16,7 @@ const items = [
 
 const Logo = (
   <a href="#top" className="nameplate flex items-center gap-2 text-[30px] leading-none text-ink md:text-[34px]" aria-label="Yuva VIT Chennai — home">
-    <img src="/images/yuva-mark.png" alt="" className="h-8 w-auto" />
+    <img {...imgProps('/img/yuva-mark.webp', '32px', { eager: true })} alt="" className="h-8 w-auto" />
     Yuva VIT Chennai
   </a>
 )

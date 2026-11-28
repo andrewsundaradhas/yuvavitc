@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { domains, tenures, team } from '../data'
 import MicroSlats from './ui/MicroSlats'
 import { Sticker, FIC } from './Sticker'
+import { imgProps } from '../lib/img'
 
 const cardVariants = {
   hidden: { opacity: 0, y: 30, scale: 0.95 },
@@ -41,11 +42,9 @@ function MemberCard({ member, index }) {
 
         <div className="relative mb-3 aspect-square w-full overflow-hidden rounded-lg border border-ink bg-bone">
           <img
-            src={member.photo}
+            {...imgProps(member.photo, '(min-width: 1024px) 220px, (min-width: 640px) 30vw, 45vw')}
             alt={member.name}
             className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-105"
-            loading="eager"
-            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
         </div>

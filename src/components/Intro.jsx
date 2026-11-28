@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
 import { domains, events } from '../data'
 import Counter from './Counter'
+import { pick } from '../lib/img'
 
 const Pill = ({ src }) => (
-  <span className="mx-[0.08em] inline-block h-[0.6em] w-[1.5em] -translate-y-[0.02em] rounded-full bg-cover bg-center align-baseline" style={{ backgroundImage: `url(${src})` }} role="presentation" />
+  <span className="mx-[0.08em] inline-block h-[0.6em] w-[1.5em] -translate-y-[0.02em] rounded-full bg-cover bg-center align-baseline" style={{ backgroundImage: `url(${pick(src, 480)})` }} role="presentation" />
 )
 
 export default function Intro() {
@@ -28,13 +29,14 @@ export default function Intro() {
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="display-md text-[clamp(52px,8.2vw,128px)] leading-[.84] tracking-[-0.05em]">
-          {events.length} <Pill src="/images/05-orphanage-visit-2024.webp" />events. <span className="opacity-35">{Object.keys(domains).length} <Pill src="/images/49-only-founders-1.webp" />domains.</span> One <Pill src="/images/56-first-responder-1.webp" />community.
+          {events.length} <Pill src="/img/05-orphanage-visit-2024.webp" />events. <span className="opacity-35">{Object.keys(domains).length} <Pill src="/img/49-only-founders-1.webp" />domains.</span> One <Pill src="/img/56-first-responder-1.webp" />community.
         </motion.h2>
       </div>
 
-      <div className="mt-16 grid grid-cols-2 border-y border-ink md:grid-cols-4">
+      {/* 4 columns only from lg: at tablet widths the 7.5rem counters ("100+") overflowed their quarter column (T1) */}
+      <div className="mt-16 grid grid-cols-2 border-y border-ink lg:grid-cols-4">
         {stats.map(({ from, to, suffix, label }, i) => (
-          <div key={label} className={`px-3 py-6 md:px-8 md:py-8 ${i % 2 === 1 ? 'border-l border-ink' : ''} ${i >= 2 ? 'border-t border-ink md:border-t-0 md:border-l' : ''}`}>
+          <div key={label} className={`px-3 py-6 md:px-8 md:py-8 ${i % 2 === 1 ? 'border-l border-ink' : ''} ${i >= 2 ? 'border-t border-ink lg:border-t-0 lg:border-l' : ''}`}>
             <div className="display-md text-6xl md:text-[7.5rem] md:leading-[.85] lg:text-[9rem]"><Counter from={from} to={to} suffix={suffix} /></div>
             <div className="eyebrow mt-2 text-charcoal">{label}</div>
           </div>

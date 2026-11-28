@@ -35,6 +35,7 @@ function randomSource(seed) {
     return ((n ^ (n >>> 14)) >>> 0) / 4294967296;
   };
 }
+const PAPER_CACHE = new Map();
 function createPaperPath(rest, triangles, shortSide, density, sharpness, depth, seed) {
   const count = rest.length / 3;
   const points = Float64Array.from(rest);
@@ -236,6 +237,55 @@ function createPaperPath(rest, triangles, shortSide, density, sharpness, depth, 
   const creased = Float32Array.from(points);
   return { samples, creased };
 }
+
+// Paper grid + fold simulation (~240 ms of CPU). Pure function of these parameters, so it is cached across instances
+// and remounts, and exported so a page can pre-compute it in an idle moment before the paper mounts.
+export function buildPaper({ width = 320, height = 400, detail = 64, foldCount = 6, foldSharpness = 0.6, wrinkleDepth = 0.65, seed = 7 } = {}) {
+  const paperWidth = Math.max(1, finite(width, 320));
+  const paperHeight = Math.max(1, finite(height, 400));
+  const aspect = paperHeight / paperWidth;
+  const shortSide = Math.min(1, aspect);
+  const key = JSON.stringify([paperWidth, paperHeight, detail, foldCount, foldSharpness, wrinkleDepth, seed]);
+  const hit = PAPER_CACHE.get(key);
+  if (hit) return hit;
+  const resolution = Math.round(clamp(finite(detail, 64) / 4, 8, 24));
+  const columns = Math.max(8, Math.round(resolution / Math.max(1, aspect)));
+  const rows = Math.max(8, Math.round(resolution * Math.min(1, aspect)));
+  const rng = randomSource(finite(seed, 7));
+  const sharpness = clamp(finite(foldSharpness, 0.6), 0, 1);
+  const foldTotal = Math.round(clamp(finite(foldCount, 6), 3, 16));
+  const depth = clamp(finite(wrinkleDepth, 0.65), 0, 2);
+  const count = (columns + 1) * (rows + 1);
+  const original = new Float32Array(count * 3);
+  const uvs = new Float32Array(count * 2);
+  const indices = [];
+  for (let row = 0; row <= rows; row++) {
+    for (let col = 0; col <= columns; col++) {
+      const index = row * (columns + 1) + col;
+      const u = (col + (col > 0 && col < columns ? (rng() - 0.5) * 0.5 : 0)) / columns;
+      const v = (row + (row > 0 && row < rows ? (rng() - 0.5) * 0.5 : 0)) / rows;
+      const x = u - 0.5,
+        y = (v - 0.5) * aspect;
+      original[index * 3] = x;
+      original[index * 3 + 1] = y;
+      uvs[index * 2] = u;
+      uvs[index * 2 + 1] = v;
+      if (col < columns && row < rows) {
+        const a = index,
+          b = index + 1,
+          c = index + columns + 1,
+          d = c + 1;
+        if (rng() > 0.5) indices.push(a, b, d, a, d, c);
+        else indices.push(a, b, c, b, d, c);
+      }
+    }
+  }
+  const paperPath = createPaperPath(original, indices, shortSide, foldTotal, sharpness, depth, finite(seed, 7));
+  const built = { count, original, uvs, indices, paperPath };
+  PAPER_CACHE.set(key, built);
+  return built;
+}
+
 const PaperCrumple = ({
   src,
   alt = 'Crumplable image',
@@ -273,7 +323,6 @@ const PaperCrumple = ({
   className = '',
   style
 }) => {
-  const pathCache = useRef(null);
   const rootRef = useRef(null);
   const canvasRef = useRef(null);
   const hitRef = useRef(null);
@@ -308,6 +357,11 @@ const PaperCrumple = ({
     onStateChange,
     onError
   };
+  // The scene is built once; a new src/backSrc only swaps textures (see swapRef), because rebuilding the renderer
+  // + shaders froze the page for ~0.9 s every time PrintTable shuffled its prints.
+  const srcRef = useRef({ src, backSrc });
+  srcRef.current = { src, backSrc };
+  const swapRef = useRef(null);
   useEffect(() => {
     const root = rootRef.current,
       canvas = canvasRef.current,
@@ -339,47 +393,10 @@ const PaperCrumple = ({
     const paperHeight = Math.max(1, finite(height, 400));
     const aspect = paperHeight / paperWidth;
     const shortSide = Math.min(1, aspect);
-    const resolution = Math.round(clamp(finite(detail, 64) / 4, 8, 24));
-    const columns = Math.max(8, Math.round(resolution / Math.max(1, aspect)));
-    const rows = Math.max(8, Math.round(resolution * Math.min(1, aspect)));
-    const rng = randomSource(finite(seed, 7));
-    const sharpness = clamp(finite(foldSharpness, 0.6), 0, 1);
-    const foldTotal = Math.round(clamp(finite(foldCount, 6), 3, 16));
-    const depth = clamp(finite(wrinkleDepth, 0.65), 0, 2);
-    const count = (columns + 1) * (rows + 1);
-    const original = new Float32Array(count * 3);
+    const { count, original, uvs, indices, paperPath } = buildPaper({ width, height, detail, foldCount, foldSharpness, wrinkleDepth, seed });
     const positions = new Float32Array(count * 3);
-    const uvs = new Float32Array(count * 2);
-    const indices = [];
-    for (let row = 0; row <= rows; row++) {
-      for (let col = 0; col <= columns; col++) {
-        const index = row * (columns + 1) + col;
-        const u = (col + (col > 0 && col < columns ? (rng() - 0.5) * 0.5 : 0)) / columns;
-        const v = (row + (row > 0 && row < rows ? (rng() - 0.5) * 0.5 : 0)) / rows;
-        const x = u - 0.5,
-          y = (v - 0.5) * aspect;
-        original[index * 3] = x;
-        original[index * 3 + 1] = y;
-        uvs[index * 2] = u;
-        uvs[index * 2 + 1] = v;
-        if (col < columns && row < rows) {
-          const a = index,
-            b = index + 1,
-            c = index + columns + 1,
-            d = c + 1;
-          if (rng() > 0.5) indices.push(a, b, d, a, d, c);
-          else indices.push(a, b, c, b, d, c);
-        }
-      }
-    }
-    const pathKey = JSON.stringify([paperWidth, paperHeight, resolution, foldTotal, sharpness, depth, seed]);
-    if (pathCache.current?.key !== pathKey) {
-      pathCache.current = {
-        key: pathKey,
-        value: createPaperPath(original, indices, shortSide, foldTotal, sharpness, depth, finite(seed, 7))
-      };
-    }
-    const paperPath = pathCache.current.value;
+    const rng = randomSource(finite(seed, 7) + 1); // grain noise (the grid's rng now lives in buildPaper)
+    const sharpness = clamp(finite(foldSharpness, 0.6), 0, 1);
     const renderPositions = new Float32Array(indices.length * 3);
     const renderNormals = new Float32Array(indices.length * 3);
     const renderUvs = new Float32Array(indices.length * 2);
@@ -984,10 +1001,21 @@ const PaperCrumple = ({
         );
       });
     }
-    if (src) {
-      Promise.all([load(src), backSrc ? load(backSrc) : Promise.resolve(null)])
+    let shownKey = null;
+    let token = 0;
+    let liveTextures = [];
+    const apply = (nextSrc, nextBack) => {
+      const key = nextSrc + '|' + (nextBack || '');
+      if (key === shownKey) return;
+      shownKey = key;
+      const mine = ++token;
+      const first = !ready;
+      Promise.all([load(nextSrc), nextBack ? load(nextBack) : Promise.resolve(null)])
         .then(([frontTexture, backTexture]) => {
-          if (disposed) return;
+          if (disposed || mine !== token) {
+            [frontTexture, backTexture].forEach(t => { if (t && !disposed) { textures.delete(t); t.dispose(); } });
+            return;
+          }
           if (backTexture) {
             backTexture.repeat.x *= -1;
             backTexture.offset.x = 1 - backTexture.offset.x;
@@ -995,23 +1023,42 @@ const PaperCrumple = ({
           frontMaterial.map = frontTexture;
           backMaterial.map = backTexture || frontTexture;
           depthMaterial.map = frontTexture;
-          frontMaterial.needsUpdate = backMaterial.needsUpdate = depthMaterial.needsUpdate = true;
-          ready = true;
-          setStatus('ready');
-          hit.disabled = options.current.disabled;
-          wake();
+          // only the first map changes the shader (null -> texture); later swaps are a uniform change, no recompile
+          if (first) frontMaterial.needsUpdate = backMaterial.needsUpdate = depthMaterial.needsUpdate = true;
+          liveTextures.forEach(t => { textures.delete(t); t.dispose(); });
+          liveTextures = [frontTexture, backTexture].filter(Boolean);
+          const show = () => {
+            if (disposed || mine !== token) return;
+            ready = true;
+            setStatus('ready');
+            hit.disabled = options.current.disabled;
+            // mounted off-screen (idle mount): draw one warm-up frame now so texture/shadow uploads don't land on the
+            // first visible frame; the render loop still only runs while in view
+            if (!inView && !contextLost) { deform(); renderer.render(scene, camera); }
+            wake();
+          };
+          // First time only: compile the shaders in the background (KHR_parallel_shader_compile) before the first frame,
+          // instead of a synchronous compile inside render() that stalled the page ~190 ms per mount.
+          if (first && renderer.compileAsync) renderer.compileAsync(scene, camera).then(show, show);
+          else show();
         })
         .catch(error => {
-          if (disposed) return;
+          if (disposed || mine !== token) return;
           setStatus('error');
           options.current.onError?.(error);
         });
+    };
+    swapRef.current = (nextSrc, nextBack) => { if (nextSrc) apply(nextSrc, nextBack); };
+    const initial = srcRef.current;
+    if (initial.src) {
+      apply(initial.src, initial.backSrc);
     } else {
       setStatus('error');
       options.current.onError?.(new Error('PaperCrumple requires an image src.'));
     }
     return () => {
       disposed = true;
+      swapRef.current = null;
       cancelAnimationFrame(frame);
       if (pointerId !== null && hit.hasPointerCapture(pointerId)) hit.releasePointerCapture(pointerId);
       resetRef.current = cancelRef.current = null;
@@ -1040,10 +1087,9 @@ const PaperCrumple = ({
       textures.forEach(texture => texture.dispose());
       light.shadow.dispose();
       renderer.dispose();
+      renderer.forceContextLoss(); // release the GL context now (Prints re-creates 3 papers every 6 s; browsers cap live contexts)
     };
   }, [
-    src,
-    backSrc,
     width,
     height,
     imageFit,
@@ -1064,6 +1110,9 @@ const PaperCrumple = ({
   useEffect(() => {
     resetRef.current?.();
   }, [resetKey]);
+  useEffect(() => {
+    swapRef.current?.(src, backSrc);
+  }, [src, backSrc]);
   useEffect(() => {
     if (disabled) cancelRef.current?.();
   }, [disabled]);

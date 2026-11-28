@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { domains, events, tenures, pad } from '../data'
+import { imgProps } from '../lib/img'
 
 export default function EventModal({ event, onClose, onNav, onPhoto }) {
   const d = domains[event.domain]
@@ -58,7 +59,7 @@ export default function EventModal({ event, onClose, onNav, onPhoto }) {
               <figure key={p.src} className={event.photos.length === 3 && i === 0 ? 'sm:col-span-2' : ''}>
                 {p.label && <figcaption className="eyebrow mb-2 text-charcoal">{p.label}</figcaption>}
                 <button onClick={() => onPhoto(event.photos, i)} className="block w-full overflow-hidden" aria-label={`Enlarge: ${p.alt}`}>
-                  <img src={p.src} alt={p.alt} className="max-h-[420px] w-full object-cover transition duration-500 hover:scale-105" />
+                  <img {...imgProps(p.src, event.photos.length > 1 ? '(min-width: 640px) 440px, 100vw' : '(min-width: 896px) 896px, 100vw')} alt={p.alt} className="max-h-[420px] w-full object-cover transition duration-500 hover:scale-105" />
                 </button>
               </figure>
             ))}

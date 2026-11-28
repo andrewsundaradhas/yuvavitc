@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useAnimationControls } from 'framer-motion'
 import { domains, events } from '../data'
-import PaperCrumple from './ui/PaperCrumple'
+import PaperCrumple, { buildPaper } from './ui/PaperCrumple'
 import { Sticker, FIC } from './Sticker'
+import { pick as pickImg } from '../lib/img'
 
 const SLOTS = [
   { rotation: -3, ouch: ['OUCH!', 'EEK!', 'NOOO!'] },
@@ -12,6 +13,21 @@ const SLOTS = [
 const relief = ['PHEW!', 'ALL BETTER', 'GOOD AS NEW', 'MOSTLY…']
 const pick = (a) => a[Math.floor(Math.random() * a.length)]
 const SHUFFLE_MS = 6000
+// paper geometry shared by all prints; warmPrints() pre-computes its ~240 ms fold simulation in an idle moment
+const PAPER = { width: 350, height: 265, foldCount: 7, detail: 56 }
+export const warmPrints = () => buildPaper(PAPER)
+
+// Replays the print's drop-in spring when its slot gets a new event (no remount: the paper's WebGL scene is kept).
+function Reshuffle({ slug, n, children }) {
+  const controls = useAnimationControls()
+  const first = useRef(true)
+  useEffect(() => {
+    if (first.current) { first.current = false; return }
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    controls.start({ opacity: [0, 1], y: [50, 0], rotate: [n % 2 ? 2 : -2, 0], transition: { type: 'spring', stiffness: 120, damping: 14, delay: n * 0.1 } })
+  }, [slug, n, controls])
+  return <motion.div animate={controls}>{children}</motion.div>
+}
 
 // Full-bleed violet colour block: white rounded type, stickers that react to every grab.
 export default function PrintTable() {
@@ -71,11 +87,12 @@ export default function PrintTable() {
             const d = domains[p.e.domain]
             const m = mood[p.slug]
             return (
-              <motion.figure key={p.slug} initial={{ opacity: 0, y: 50, rotate: n % 2 ? 2 : -2 }} whileInView={{ opacity: 1, y: 0, rotate: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ type: 'spring', stiffness: 120, damping: 14, delay: n * 0.1 }}
+              <motion.figure key={n} initial={{ opacity: 0, y: 50, rotate: n % 2 ? 2 : -2 }} whileInView={{ opacity: 1, y: 0, rotate: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ type: 'spring', stiffness: 120, damping: 14, delay: n * 0.1 }}
                 className="relative rounded-[15px]" style={{ background: FIC.cream }}>
+                <Reshuffle slug={p.slug} n={n}>
                 <PaperCrumple
-                  src={p.e.photos[0].src} alt={p.e.photos[0].alt} width={350} height={265} sceneHeight={stage} rotation={p.rotation}
-                  releaseBehavior="creased" crumpleAmount={0.9} creaseStrength={0.2} foldCount={7} detail={56}
+                  src={pickImg(p.e.photos[0].src, 700)} alt={p.e.photos[0].alt} {...PAPER} sceneHeight={stage} rotation={p.rotation}
+                  releaseBehavior="creased" crumpleAmount={0.9} creaseStrength={0.2}
                   paperColor="#f4f0e8" dragRadius={60} returnToOrigin resetKey={resetKey} onStateChange={react(p)}
                 />
                 <AnimatePresence>
@@ -92,6 +109,7 @@ export default function PrintTable() {
                   <span className="font-round text-xl font-bold leading-none lg:text-2xl">{p.e.short}</span>
                   <span className="rounded-full px-3 py-1 font-round text-[13px] font-semibold" style={{ background: d.color }}>{d.name}</span>
                 </figcaption>
+                </Reshuffle>
               </motion.figure>
             )
           })}

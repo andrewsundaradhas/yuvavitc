@@ -893,6 +893,9 @@ const MicroSlats = ({
 
     wakeRef.current = start;
     resize();
+    // warm-up: draw one frame now (dt = 0, so the intro doesn't advance) so shader linking and target allocation
+    // happen at mount (an idle moment) instead of on the first visible frame (~100 ms hitch while scrolling)
+    if (!raf) { last = performance.now(); frame(last); }
 
     return () => {
       alive = false;

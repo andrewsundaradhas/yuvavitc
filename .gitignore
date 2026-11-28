@@ -7,3 +7,9 @@ dist
 .env.*
 !.env.example
 .env*
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+scripts/out/

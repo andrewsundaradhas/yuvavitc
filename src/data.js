@@ -14,7 +14,7 @@ export const domains = {
   entrep: { name: 'Entrepreneurship', color: '#b7b2ff' },
 }
 
-const img = (f) => `/images/${f}.webp`
+const img = (f) => `/img/${f}.webp`
 
 export const events = [
   // ─── 2026 – 2027 TENURE ───
@@ -24,10 +24,10 @@ export const events = [
     title: 'Roadyssey',
     desc: 'A creative road safety awareness campaign by YUVA VIT Chennai — empowering students to craft compelling visual posters and messages on speed limits, helmet safety, and distraction-free riding.',
     photos: [
-      { src: '/images/IMG-20260622-WA0088.jpg', alt: 'Roadyssey' },
-      { src: '/images/roadyssey-1.jpg', alt: 'Roadyssey — Speed Limit Awareness by Sruti B' },
-      { src: '/images/roadyssey-2.jpg', alt: 'Roadyssey — Helmet Safety by Haseeb Ahsan' },
-      { src: '/images/roadyssey-3.jpg', alt: 'Roadyssey — Distraction-Free Riding by Melanie Veera Saldanha' },
+      { src: '/img/img-20260622-wa0088.webp', alt: 'Roadyssey' },
+      { src: '/img/roadyssey-1.webp', alt: 'Roadyssey — Speed Limit Awareness by Sruti B' },
+      { src: '/img/roadyssey-2.webp', alt: 'Roadyssey — Helmet Safety by Haseeb Ahsan' },
+      { src: '/img/roadyssey-3.webp', alt: 'Roadyssey — Distraction-Free Riding by Melanie Veera Saldanha' },
     ],
     instructions: [
       'Promote safe speed limits, helmet usage, and phone-free riding',
@@ -42,11 +42,11 @@ export const events = [
     title: 'Freshers Expo',
     desc: 'An energetic entrepreneurship and club showcase welcoming the new batch of freshers to YUVA VIT Chennai — featuring interactive stalls, domain highlights, startup ideation activities, and student engagement.',
     photos: [
-      { src: '/images/IMG_8908.JPG', alt: 'Freshers Expo 2026-27' },
-      { src: '/images/IMG_8348.JPG', alt: 'Freshers Expo 2026-27 — 2' },
-      { src: '/images/IMG_8389.JPG', alt: 'Freshers Expo 2026-27 — 3' },
-      { src: '/images/IMG_8410.JPG', alt: 'Freshers Expo 2026-27 — 4' },
-      { src: '/images/IMG_8458.JPG', alt: 'Freshers Expo 2026-27 — 5' },
+      { src: '/img/img-8908.webp', alt: 'Freshers Expo 2026-27' },
+      { src: '/img/img-8348.webp', alt: 'Freshers Expo 2026-27 — 2' },
+      { src: '/img/img-8389.webp', alt: 'Freshers Expo 2026-27 — 3' },
+      { src: '/img/img-8410.webp', alt: 'Freshers Expo 2026-27 — 4' },
+      { src: '/img/img-8458.webp', alt: 'Freshers Expo 2026-27 — 5' },
     ],
     instructions: [
       'Set up entrepreneurship and YUVA domain showcase booths',
@@ -61,12 +61,12 @@ export const events = [
     title: 'Prime Time — Core Reveal & Open Mic',
     desc: 'The grand induction and core reveal of YUVA VIT Chennai for the 2026–2027 tenure — celebrating new student leaders with creative introductions, vision sharing, open mic performances, music, and dance.',
     photos: [
-      { src: '/images/IMG_0695.JPG', alt: 'Prime Time 2026-27' },
-      { src: '/images/prime-time-2026-1.jpg', alt: 'Prime Time 2026-27 — Team Group' },
-      { src: '/images/prime-time-2026-2.jpg', alt: 'Prime Time 2026-27 — Open Mic' },
-      { src: '/images/prime-time-2026-3.jpg', alt: 'Prime Time 2026-27 — Cultural Dance' },
-      { src: '/images/prime-time-2026-4.jpg', alt: 'Prime Time 2026-27 — Dance Performance' },
-      { src: '/images/prime-time-2026-5.jpg', alt: 'Prime Time 2026-27 — Aadiney Irupom Dance Team' },
+      { src: '/img/img-0695.webp', alt: 'Prime Time 2026-27' },
+      { src: '/img/prime-time-2026-1.webp', alt: 'Prime Time 2026-27 — Team Group' },
+      { src: '/img/prime-time-2026-2.webp', alt: 'Prime Time 2026-27 — Open Mic' },
+      { src: '/img/prime-time-2026-3.webp', alt: 'Prime Time 2026-27 — Cultural Dance' },
+      { src: '/img/prime-time-2026-4.webp', alt: 'Prime Time 2026-27 — Dance Performance' },
+      { src: '/img/prime-time-2026-5.webp', alt: 'Prime Time 2026-27 — Aadiney Irupom Dance Team' },
     ],
     instructions: [
       'Introduce the 2026–2027 board and core team creatively',
@@ -81,14 +81,14 @@ export const events = [
     title: 'Yuva Sports',
     desc: 'An energetic campus sports meet by YUVA VIT Chennai — bringing students together through competitive matches, team spirit, fitness challenges, and fair-play sportsmanship.',
     photos: [
-      { src: '/images/yuva-sports-2026.jpg', alt: 'Yuva Sports 2026-27' },
-      { src: '/images/yuva-sports-2026-1.jpg', alt: 'Yuva Sports 2026-27 — Carrom' },
-      { src: '/images/yuva-sports-2026-2.jpg', alt: 'Yuva Sports 2026-27 — Chess' },
-      { src: '/images/yuva-sports-2026-3.jpg', alt: 'Yuva Sports 2026-27 — Cricket' },
-      { src: '/images/yuva-sports-2026-4.jpg', alt: 'Yuva Sports 2026-27 — Cricket Team Celebration' },
-      { src: '/images/yuva-sports-2026-5.jpg', alt: 'Yuva Sports 2026-27 — Football' },
-      { src: '/images/yuva-sports-2026-6.jpg', alt: 'Yuva Sports 2026-27 — Football Squad' },
-      { src: '/images/yuva-sports-2026-7.jpg', alt: 'Yuva Sports 2026-27 — Table Tennis' },
+      { src: '/img/yuva-sports-2026.webp', alt: 'Yuva Sports 2026-27' },
+      { src: '/img/yuva-sports-2026-1.webp', alt: 'Yuva Sports 2026-27 — Carrom' },
+      { src: '/img/yuva-sports-2026-2.webp', alt: 'Yuva Sports 2026-27 — Chess' },
+      { src: '/img/yuva-sports-2026-3.webp', alt: 'Yuva Sports 2026-27 — Cricket' },
+      { src: '/img/yuva-sports-2026-4.webp', alt: 'Yuva Sports 2026-27 — Cricket Team Celebration' },
+      { src: '/img/yuva-sports-2026-5.webp', alt: 'Yuva Sports 2026-27 — Football' },
+      { src: '/img/yuva-sports-2026-6.webp', alt: 'Yuva Sports 2026-27 — Football Squad' },
+      { src: '/img/yuva-sports-2026-7.webp', alt: 'Yuva Sports 2026-27 — Table Tennis' },
     ],
     instructions: [
       'Coordinate venue, sports equipment, and match fixtures',
@@ -103,10 +103,10 @@ export const events = [
     title: 'Hearts Together',
     desc: 'A heartwarming community outreach initiative under Accessibility — spending meaningful time with children through interactive storytelling, engaging activities, mentorship, and shared joy.',
     photos: [
-      { src: '/images/hearts-together-2026.jpg', alt: 'Hearts Together 2026-27' },
-      { src: '/images/hearts-together-2026-1.jpg', alt: 'Hearts Together 2026-27 — Volunteer Interaction' },
-      { src: '/images/hearts-together-2026-2.jpg', alt: 'Hearts Together 2026-27 — Activity Session' },
-      { src: '/images/hearts-together-2026-3.jpg', alt: 'Hearts Together 2026-27 — Interactive Games' },
+      { src: '/img/hearts-together-2026.webp', alt: 'Hearts Together 2026-27' },
+      { src: '/img/hearts-together-2026-1.webp', alt: 'Hearts Together 2026-27 — Volunteer Interaction' },
+      { src: '/img/hearts-together-2026-2.webp', alt: 'Hearts Together 2026-27 — Activity Session' },
+      { src: '/img/hearts-together-2026-3.webp', alt: 'Hearts Together 2026-27 — Interactive Games' },
     ],
     instructions: [
       'Coordinate outreach visit permissions and volunteer teams',
@@ -121,7 +121,7 @@ export const events = [
     title: 'Movie Screening — Nanban',
     desc: 'A special campus screening of the beloved film Nanban — celebrating friendship, curiosity, and creative thinking beyond rote learning, bringing the YUVA VIT Chennai community together for an inspiring evening.',
     photos: [
-      { src: '/images/nanban-hover-2026.jpg', alt: 'Movie Screening — Nanban 2026-27' },
+      { src: '/img/nanban-hover-2026.webp', alt: 'Movie Screening — Nanban 2026-27' },
     ],
     instructions: [
       'Arrange auditorium venue, projection, and audio setup',
@@ -136,11 +136,11 @@ export const events = [
     title: 'FitDecoded',
     desc: 'An interactive health and wellness session by YUVA VIT Chennai — busting common fitness and nutrition myths, decoding everyday wellness habits, and empowering students with practical, science-backed lifestyle guidance.',
     photos: [
-      { src: '/images/fitdecoded-2026.jpg', alt: 'FitDecoded 2026-27' },
-      { src: '/images/fitdecoded-2026-1.jpg', alt: 'FitDecoded session 1' },
-      { src: '/images/fitdecoded-2026-2.jpg', alt: 'FitDecoded session 2' },
-      { src: '/images/fitdecoded-2026-3.jpg', alt: 'FitDecoded session 3' },
-      { src: '/images/fitdecoded-2026-4.jpg', alt: 'FitDecoded session 4' },
+      { src: '/img/fitdecoded-2026.webp', alt: 'FitDecoded 2026-27' },
+      { src: '/img/fitdecoded-2026-1.webp', alt: 'FitDecoded session 1' },
+      { src: '/img/fitdecoded-2026-2.webp', alt: 'FitDecoded session 2' },
+      { src: '/img/fitdecoded-2026-3.webp', alt: 'FitDecoded session 3' },
+      { src: '/img/fitdecoded-2026-4.webp', alt: 'FitDecoded session 4' },
     ],
     instructions: [
       'Invite a health, fitness, or nutrition speaker to lead the session',
@@ -155,12 +155,12 @@ export const events = [
     title: 'Techno Club Expo',
     desc: 'An interactive campus tech & innovation showcase during TechnoVIT — featuring live student demos, Hack to Startup and Bid Your Intelligence highlights, and hands-on booth engagement.',
     photos: [
-      { src: '/images/techno-club-expo-2026.jpg', alt: 'Techno Club Expo 2026-27' },
-      { src: '/images/techno-club-expo-2026-1.jpg', alt: 'Techno Club Expo booth 1' },
-      { src: '/images/techno-club-expo-2026-2.jpg', alt: 'Techno Club Expo booth 2' },
-      { src: '/images/techno-club-expo-2026-3.jpg', alt: 'Techno Club Expo booth 3' },
-      { src: '/images/techno-club-expo-2026-4.jpg', alt: 'Techno Club Expo booth 4' },
-      { src: '/images/techno-club-expo-2026-5.jpg', alt: 'Techno Club Expo booth 5' },
+      { src: '/img/techno-club-expo-2026.webp', alt: 'Techno Club Expo 2026-27' },
+      { src: '/img/techno-club-expo-2026-1.webp', alt: 'Techno Club Expo booth 1' },
+      { src: '/img/techno-club-expo-2026-2.webp', alt: 'Techno Club Expo booth 2' },
+      { src: '/img/techno-club-expo-2026-3.webp', alt: 'Techno Club Expo booth 3' },
+      { src: '/img/techno-club-expo-2026-4.webp', alt: 'Techno Club Expo booth 4' },
+      { src: '/img/techno-club-expo-2026-5.webp', alt: 'Techno Club Expo booth 5' },
     ],
     instructions: [
       'Set up the YUVA VIT Chennai expo booth with live project demos',
@@ -175,12 +175,12 @@ export const events = [
     title: 'The Missing Piece',
     desc: 'An engaging innovation and problem-solving event by YUVA VIT Chennai — challenging participants to connect clues, bridge conceptual gaps, and uncover creative solutions through collaborative thinking.',
     photos: [
-      { src: '/images/missing-piece-2026.jpg', alt: 'The Missing Piece 2026-27' },
-      { src: '/images/missing-piece-2026-1.jpg', alt: 'The Missing Piece event 1' },
-      { src: '/images/missing-piece-2026-2.jpg', alt: 'The Missing Piece event 2' },
-      { src: '/images/missing-piece-2026-3.jpg', alt: 'The Missing Piece clues' },
-      { src: '/images/missing-piece-2026-4.jpg', alt: 'The Missing Piece event 4' },
-      { src: '/images/missing-piece-2026-5.jpg', alt: 'The Missing Piece event 5' },
+      { src: '/img/missing-piece-2026.webp', alt: 'The Missing Piece 2026-27' },
+      { src: '/img/missing-piece-2026-1.webp', alt: 'The Missing Piece event 1' },
+      { src: '/img/missing-piece-2026-2.webp', alt: 'The Missing Piece event 2' },
+      { src: '/img/missing-piece-2026-3.webp', alt: 'The Missing Piece clues' },
+      { src: '/img/missing-piece-2026-4.webp', alt: 'The Missing Piece event 4' },
+      { src: '/img/missing-piece-2026-5.webp', alt: 'The Missing Piece event 5' },
     ],
     instructions: [
       'Design multi-stage innovation puzzles and team problem statements',
@@ -195,13 +195,13 @@ export const events = [
     title: 'Thithikum Diwali',
     desc: 'A joyful festive outreach celebration under Accessibility — bringing YUVA VIT Chennai volunteers together to share Diwali warmth, games, sweets, and memorable moments with children and community partners.',
     photos: [
-      { src: '/images/thithikum-diwali-2026.jpg', alt: 'Thithikum Diwali 2026-27' },
-      { src: '/images/thithikum-diwali-2026-1.jpg', alt: 'Thithikum Diwali event 1' },
-      { src: '/images/thithikum-diwali-2026-2.jpg', alt: 'Thithikum Diwali event 2' },
-      { src: '/images/thithikum-diwali-2026-3.jpg', alt: 'Thithikum Diwali event 3' },
-      { src: '/images/thithikum-diwali-2026-4.jpg', alt: 'Thithikum Diwali event 4' },
-      { src: '/images/thithikum-diwali-2026-5.jpg', alt: 'Thithikum Diwali event 5' },
-      { src: '/images/thithikum-diwali-2026-6.jpg', alt: 'Thithikum Diwali event 6' },
+      { src: '/img/thithikum-diwali-2026.webp', alt: 'Thithikum Diwali 2026-27' },
+      { src: '/img/thithikum-diwali-2026-1.webp', alt: 'Thithikum Diwali event 1' },
+      { src: '/img/thithikum-diwali-2026-2.webp', alt: 'Thithikum Diwali event 2' },
+      { src: '/img/thithikum-diwali-2026-3.webp', alt: 'Thithikum Diwali event 3' },
+      { src: '/img/thithikum-diwali-2026-4.webp', alt: 'Thithikum Diwali event 4' },
+      { src: '/img/thithikum-diwali-2026-5.webp', alt: 'Thithikum Diwali event 5' },
+      { src: '/img/thithikum-diwali-2026-6.webp', alt: 'Thithikum Diwali event 6' },
     ],
     instructions: [
       'Coordinate outreach logistics and volunteer teams for the festive celebration',
@@ -216,8 +216,8 @@ export const events = [
     title: 'Bid Ur Intelligence',
     desc: 'A high-energy entrepreneurship and strategy auction event by YUVA VIT Chennai — where teams bid smartly on resources, ideas, and challenges to test their business acumen, quick decision-making, and pitching skills.',
     photos: [
-      { src: '/images/bid-ur-intelligence-1.jpg', alt: 'Bid Ur Intelligence 2026-27' },
-      { src: '/images/bid-ur-intelligence-2.jpg', alt: 'Bid Ur Intelligence — Event Highlights' },
+      { src: '/img/bid-ur-intelligence-1.webp', alt: 'Bid Ur Intelligence 2026-27' },
+      { src: '/img/bid-ur-intelligence-2.webp', alt: 'Bid Ur Intelligence — Event Highlights' },
     ],
     instructions: [
       'Brief participating teams on virtual budgets, bidding rules, and strategy rounds',
@@ -232,8 +232,8 @@ export const events = [
     title: 'Hack to Startup',
     desc: 'An intense entrepreneurship and product-building hackathon by YUVA VIT Chennai — guiding student teams from rapid ideation and prototyping to pitching scalable startup ventures.',
     photos: [
-      { src: '/images/hack-to-startup-2026.jpg', alt: 'Hack to Startup 2026-27' },
-      { src: '/images/hack-to-startup-2026-2.jpg', alt: 'Hack to Startup — Winner Prize' },
+      { src: '/img/hack-to-startup-2026.webp', alt: 'Hack to Startup 2026-27' },
+      { src: '/img/hack-to-startup-2026-2.webp', alt: 'Hack to Startup — Winner Prize' },
     ],
     instructions: [
       'Form cross-functional student teams and select real-world problem statements',
@@ -248,12 +248,12 @@ export const events = [
     short: 'Curtain Raiser',
     title: 'Curtain Raiser',
     desc: 'The official curtain raiser event of YUVA VIT Chennai 2024-25 — an energetic launch session introducing the club\'s vision, upcoming events, and welcoming new members into the YUVA community.',
-    hoverPhoto: '/images/curtain-raiser-24-hover.jpg',
+    hoverPhoto: '/img/curtain-raiser-24-hover.webp',
     photos: [
-      { src: '/images/curtain-raiser-24-hover.jpg', alt: 'Curtain Raiser' },
-      { src: '/images/curtain-raiser-24-2.jpg', alt: 'Curtain Raiser 2' },
-      { src: '/images/curtain-raiser-24-3.jpg', alt: 'Curtain Raiser 3' },
-      { src: '/images/curtain-raiser-24-4.jpg', alt: 'Curtain Raiser 4' },
+      { src: '/img/curtain-raiser-24-hover.webp', alt: 'Curtain Raiser' },
+      { src: '/img/curtain-raiser-24-2.webp', alt: 'Curtain Raiser 2' },
+      { src: '/img/curtain-raiser-24-3.webp', alt: 'Curtain Raiser 3' },
+      { src: '/img/curtain-raiser-24-4.webp', alt: 'Curtain Raiser 4' },
     ],
     instructions: [
       'Plan an engaging opening ceremony with leadership introductions',
@@ -267,12 +267,12 @@ export const events = [
     short: 'Vithaigal Virutchamagum',
     title: 'Vithaigal Virutchamagum',
     desc: 'An educational outreach to government schools in collaboration with Arignar Anna Tamizh Mandram — conducting career guidance, basic skill workshops, and distributing study materials using simple language and interactive methods.',
-    hoverPhoto: '/images/vithaigal-24-hover.jpg',
+    hoverPhoto: '/img/vithaigal-24-hover.webp',
     photos: [
-      { src: '/images/vithaigal-24-hover.jpg', alt: 'Vithaigal Virutchamagum' },
-      { src: '/images/vithaigal-24-1.jpg', alt: 'Vithaigal Virutchamagum 2' },
-      { src: '/images/vithaigal-24-2.jpg', alt: 'Vithaigal Virutchamagum 3' },
-      { src: '/images/vithaigal-24-3.jpg', alt: 'Vithaigal Virutchamagum 4' },
+      { src: '/img/vithaigal-24-hover.webp', alt: 'Vithaigal Virutchamagum' },
+      { src: '/img/vithaigal-24-1.webp', alt: 'Vithaigal Virutchamagum 2' },
+      { src: '/img/vithaigal-24-2.webp', alt: 'Vithaigal Virutchamagum 3' },
+      { src: '/img/vithaigal-24-3.webp', alt: 'Vithaigal Virutchamagum 4' },
     ],
     instructions: [
       'Coordinate with school authorities',
@@ -286,14 +286,14 @@ export const events = [
     short: 'Open Mic',
     title: 'Open Mic',
     desc: 'An open stage event celebrating raw talent — students showcased their creativity through singing, dancing, stand-up comedy, spoken word, and more in an energetic outdoor performance.',
-    hoverPhoto: '/images/open-mic-24-hover.jpg',
+    hoverPhoto: '/img/open-mic-24-hover.webp',
     photos: [
-      { src: '/images/open-mic-24-1.jpg', alt: 'Open Mic' },
-      { src: '/images/open-mic-24-2.jpg', alt: 'Open Mic 2' },
-      { src: '/images/open-mic-24-3.jpg', alt: 'Open Mic 3' },
-      { src: '/images/open-mic-24-4.jpg', alt: 'Open Mic 4' },
-      { src: '/images/open-mic-24-5.jpg', alt: 'Open Mic 5' },
-      { src: '/images/open-mic-24-hover.jpg', alt: 'Open Mic 6' },
+      { src: '/img/open-mic-24-1.webp', alt: 'Open Mic' },
+      { src: '/img/open-mic-24-2.webp', alt: 'Open Mic 2' },
+      { src: '/img/open-mic-24-3.webp', alt: 'Open Mic 3' },
+      { src: '/img/open-mic-24-4.webp', alt: 'Open Mic 4' },
+      { src: '/img/open-mic-24-5.webp', alt: 'Open Mic 5' },
+      { src: '/img/open-mic-24-hover.webp', alt: 'Open Mic 6' },
     ],
     instructions: [
       'Open registrations for all performance categories (singing, dance, comedy, spoken word)',
@@ -307,11 +307,11 @@ export const events = [
     short: 'Code 2 Career',
     title: 'Code 2 Career',
     desc: 'A technical career guidance session bridging the gap between coding skills and industry careers — featuring expert talks, live demonstrations, and practical insights on career paths in tech.',
-    hoverPhoto: '/images/code2career-24-hover.jpg',
+    hoverPhoto: '/img/code2career-24-hover.webp',
     photos: [
-      { src: '/images/code2career-24-hover.jpg', alt: 'Code 2 Career' },
-      { src: '/images/code2career-24-2.jpg', alt: 'Code 2 Career 2' },
-      { src: '/images/code2career-24-3.jpg', alt: 'Code 2 Career 3' },
+      { src: '/img/code2career-24-hover.webp', alt: 'Code 2 Career' },
+      { src: '/img/code2career-24-2.webp', alt: 'Code 2 Career 2' },
+      { src: '/img/code2career-24-3.webp', alt: 'Code 2 Career 3' },
     ],
     instructions: [
       'Invite industry professionals and alumni as speakers',
@@ -356,10 +356,10 @@ export const events = [
     short: 'Drug & Traffic Seminar',
     title: 'Drug & Traffic Awareness Seminar',
     desc: 'A large-scale awareness seminar on drug abuse and road safety — featuring expert speakers from law enforcement and health sectors addressing students on the dangers of substance abuse and traffic violations.',
-    hoverPhoto: '/images/drug-traffic-24-hover.jpg',
+    hoverPhoto: '/img/drug-traffic-24-hover.webp',
     photos: [
-      { src: '/images/drug-traffic-24-hover.jpg', alt: 'Drug & Traffic Awareness Seminar' },
-      { src: '/images/drug-traffic-24-2.jpg', alt: 'Drug & Traffic Awareness Seminar 2' },
+      { src: '/img/drug-traffic-24-hover.webp', alt: 'Drug & Traffic Awareness Seminar' },
+      { src: '/img/drug-traffic-24-2.webp', alt: 'Drug & Traffic Awareness Seminar 2' },
     ],
     instructions: [
       'Coordinate with police/health officials for expert speakers',
@@ -373,16 +373,16 @@ export const events = [
     short: 'Gift of Giving',
     title: 'Gift of Giving',
     desc: 'A heartwarming outreach initiative by YUVA VIT Chennai in collaboration with Biosphere Club — visiting children at Good Life Centre Children\'s Home to spend quality time through games, activities, storytelling, and distributing gifts and care packages.',
-    hoverPhoto: '/images/gift-of-giving-24-hover-new.jpg',
+    hoverPhoto: '/img/gift-of-giving-24-hover-new.webp',
     photos: [
-      { src: '/images/gift-of-giving-24-hover-new.jpg', alt: 'Gift of Giving' },
-      { src: '/images/gift-of-giving-24-7.jpg', alt: 'Gift of Giving — Good Life Centre' },
-      { src: '/images/gift-of-giving-24-hover.jpg', alt: 'Gift of Giving 3' },
-      { src: '/images/gift-of-giving-24-2.jpg', alt: 'Gift of Giving 4' },
-      { src: '/images/gift-of-giving-24-3.jpg', alt: 'Gift of Giving 5' },
-      { src: '/images/gift-of-giving-24-4.jpg', alt: 'Gift of Giving 6' },
-      { src: '/images/gift-of-giving-24-5.jpg', alt: 'Gift of Giving 7' },
-      { src: '/images/gift-of-giving-24-6.jpg', alt: 'Gift of Giving 8' },
+      { src: '/img/gift-of-giving-24-hover-new.webp', alt: 'Gift of Giving' },
+      { src: '/img/gift-of-giving-24-7.webp', alt: 'Gift of Giving — Good Life Centre' },
+      { src: '/img/gift-of-giving-24-hover.webp', alt: 'Gift of Giving 3' },
+      { src: '/img/gift-of-giving-24-2.webp', alt: 'Gift of Giving 4' },
+      { src: '/img/gift-of-giving-24-3.webp', alt: 'Gift of Giving 5' },
+      { src: '/img/gift-of-giving-24-4.webp', alt: 'Gift of Giving 6' },
+      { src: '/img/gift-of-giving-24-5.webp', alt: 'Gift of Giving 7' },
+      { src: '/img/gift-of-giving-24-6.webp', alt: 'Gift of Giving 8' },
     ],
     instructions: [
       'Contact orphanage in advance for permission',
@@ -397,9 +397,9 @@ export const events = [
     short: 'Yuva Sports',
     title: 'Yuva Sports',
     desc: 'A spirited sports event by YUVA VIT Chennai — bringing members together for friendly competitions, team activities, and an energetic celebration of fitness and sportsmanship.',
-    hoverPhoto: '/images/yuva-sports-24-hover.jpg',
+    hoverPhoto: '/img/yuva-sports-24-hover.webp',
     photos: [
-      { src: '/images/yuva-sports-24-hover.jpg', alt: 'Yuva Sports' },
+      { src: '/img/yuva-sports-24-hover.webp', alt: 'Yuva Sports' },
     ],
     instructions: [
       'Organise team sports and individual athletic events',
@@ -673,8 +673,8 @@ export const events = [
     title: 'Thithikum Diwali',
     desc: 'A joyful festive outreach celebration under Accessibility — bringing YUVA VIT Chennai volunteers together to share Diwali warmth, games, sweets, and memorable moments with children and community partners.',
     photos: [
-      { src: '/images/thithikum-diwali-2025-hover.jpg', alt: 'Thithikum Diwali 2025-26' },
-      { src: '/images/thithikum-diwali-2025-1.jpg', alt: 'Thithikum Diwali 2025-26 — Volunteers' },
+      { src: '/img/thithikum-diwali-2025-hover.webp', alt: 'Thithikum Diwali 2025-26' },
+      { src: '/img/thithikum-diwali-2025-1.webp', alt: 'Thithikum Diwali 2025-26 — Volunteers' },
     ],
     instructions: [
       'Coordinate outreach logistics and volunteer teams for the festive celebration',
@@ -683,6 +683,42 @@ export const events = [
       'Share joy and foster an inclusive, welcoming community spirit',
     ],
   },
+]
+
+
+// Gallery ring highlights (D-021): 30 frames, one cover per event (4 events without a strong event photo are left out).
+// Edit freely: any photo src from `events` works. Every photo still appears in its own event's gallery.
+export const galleryHighlights = [
+  '/img/img-20260622-wa0088.webp',
+  '/img/img-8908.webp',
+  '/img/img-0695.webp',
+  '/img/yuva-sports-2026.webp',
+  '/img/hearts-together-2026.webp',
+  '/img/nanban-hover-2026.webp',
+  '/img/fitdecoded-2026.webp',
+  '/img/techno-club-expo-2026.webp',
+  '/img/missing-piece-2026.webp',
+  '/img/thithikum-diwali-2026.webp',
+  '/img/curtain-raiser-24-hover.webp',
+  '/img/vithaigal-24-hover.webp',
+  '/img/open-mic-24-1.webp',
+  '/img/code2career-24-hover.webp',
+  '/img/02-mime-performance-group-photo.webp',
+  '/img/drug-traffic-24-hover.webp',
+  '/img/gift-of-giving-24-hover-new.webp',
+  '/img/yuva-sports-24-hover.webp',
+  '/img/24-freshers-expo.webp',
+  '/img/16-core-reveal-team-introduction.webp',
+  '/img/56-first-responder-1.webp',
+  '/img/21-movie-screening-meesaya-murukku.webp',
+  '/img/29-kalvi-kondattam-1.webp',
+  '/img/11-thon-event-group-photo.webp',
+  '/img/42-agentic-ai-workshop-1.webp',
+  '/img/46-vibrance-expo-1.webp',
+  '/img/90-pongal-kondattam-1.webp',
+  '/img/49-only-founders-1.webp',
+  '/img/69-young-wings-1.webp',
+  '/img/thithikum-diwali-2025-hover.webp',
 ]
 
 export const team = [
@@ -695,7 +731,7 @@ export const team = [
     role: 'Faculty Coordinator',
     category: 'Faculty',
     domain: 'learn',
-    photo: '/images/team-fac-sheik-abdullah.jpg',
+    photo: '/img/team-fac-sheik-abdullah.webp',
   },
   {
     id: '24-02',
@@ -704,7 +740,7 @@ export const team = [
     role: 'Faculty Coordinator',
     category: 'Faculty',
     domain: 'learn',
-    photo: '/images/team-fac-priyadarshini.jpg',
+    photo: '/img/team-fac-priyadarshini.webp',
   },
   // Core and Board Members
   {
@@ -714,7 +750,7 @@ export const team = [
     role: 'Chairperson',
     category: 'Leadership',
     domain: 'health',
-    photo: '/images/team-25-sanjith.jpg',
+    photo: '/img/team-25-sanjith.webp',
   },
   {
     id: '24-04',
@@ -723,7 +759,7 @@ export const team = [
     role: 'Vice Chairperson',
     category: 'Leadership',
     domain: 'road',
-    photo: '/images/team-24-hemanth.jpg',
+    photo: '/img/team-24-hemanth.webp',
   },
   {
     id: '24-adv-01',
@@ -732,7 +768,7 @@ export const team = [
     role: 'Advisory',
     category: 'Leadership',
     domain: 'innov',
-    photo: '/images/team-24-shakthivel.jpg',
+    photo: '/img/team-24-shakthivel.webp',
   },
   {
     id: '24-adv-02',
@@ -741,7 +777,7 @@ export const team = [
     role: 'Advisory',
     category: 'Leadership',
     domain: 'innov',
-    photo: '/images/team-24-monish.jpg',
+    photo: '/img/team-24-monish.webp',
   },
   {
     id: '24-adv-03',
@@ -750,7 +786,7 @@ export const team = [
     role: 'Advisory',
     category: 'Leadership',
     domain: 'innov',
-    photo: '/images/team-24-rohitaa.jpg',
+    photo: '/img/team-24-rohitaa.webp',
   },
   {
     id: '24-05',
@@ -759,7 +795,7 @@ export const team = [
     role: 'Marketing Lead',
     category: 'Media',
     domain: 'health',
-    photo: '/images/team-24-abisha.jpg',
+    photo: '/img/team-24-abisha.webp',
   },
   {
     id: '24-06',
@@ -768,7 +804,7 @@ export const team = [
     role: 'Marketing Lead',
     category: 'Media',
     domain: 'innov',
-    photo: '/images/team-24-yogesh-ravi.jpg',
+    photo: '/img/team-24-yogesh-ravi.webp',
   },
   {
     id: '24-07',
@@ -777,7 +813,7 @@ export const team = [
     role: 'EM Lead',
     category: 'Operations',
     domain: 'climate',
-    photo: '/images/team-24-karthiban.jpg',
+    photo: '/img/team-24-karthiban.webp',
   },
   {
     id: '24-08',
@@ -786,7 +822,7 @@ export const team = [
     role: 'EM Lead',
     category: 'Operations',
     domain: 'climate',
-    photo: '/images/team-24-dheeraj.jpg',
+    photo: '/img/team-24-dheeraj.webp',
   },
   {
     id: '24-09',
@@ -795,7 +831,7 @@ export const team = [
     role: 'Social Media Lead',
     category: 'Media',
     domain: 'access',
-    photo: '/images/team-24-praveen.jpg',
+    photo: '/img/team-24-praveen.webp',
   },
   {
     id: '24-10',
@@ -804,7 +840,7 @@ export const team = [
     role: 'Editing Lead',
     category: 'Media',
     domain: 'climate',
-    photo: '/images/team-24-dharun.jpg',
+    photo: '/img/team-24-dharun.webp',
   },
   {
     id: '24-11',
@@ -813,7 +849,7 @@ export const team = [
     role: 'Design Lead',
     category: 'Media',
     domain: 'learn',
-    photo: '/images/team-24-sanjana.jpg',
+    photo: '/img/team-24-sanjana.webp',
   },
   {
     id: '24-photo-01',
@@ -822,7 +858,7 @@ export const team = [
     role: 'Photography Lead',
     category: 'Media',
     domain: 'innov',
-    photo: '/images/team-24-monish-photo.jpg',
+    photo: '/img/team-24-monish-photo.webp',
   },
   // ─── 2025 – 2026 TENURE ───
   {
@@ -832,7 +868,7 @@ export const team = [
     role: 'Faculty Coordinator',
     category: 'Faculty',
     domain: 'learn',
-    photo: '/images/team-fac-sheik-abdullah.jpg',
+    photo: '/img/team-fac-sheik-abdullah.webp',
   },
   {
     id: '25-fac-02',
@@ -841,7 +877,7 @@ export const team = [
     role: 'Faculty Coordinator',
     category: 'Faculty',
     domain: 'learn',
-    photo: '/images/team-fac-priyadarshini.jpg',
+    photo: '/img/team-fac-priyadarshini.webp',
   },
   {
     id: '25-01',
@@ -851,7 +887,7 @@ export const team = [
     role: 'Chairperson',
     category: 'Leadership',
     domain: 'innov',
-    photo: '/images/team-25-yogesh-ravi.jpg',
+    photo: '/img/team-25-yogesh-ravi.webp',
   },
   {
     id: '25-02',
@@ -861,7 +897,7 @@ export const team = [
     role: 'Vice Chairperson',
     category: 'Leadership',
     domain: 'road',
-    photo: '/images/team-25-subashri.jpg',
+    photo: '/img/team-25-subashri.webp',
   },
   {
     id: '25-03',
@@ -871,7 +907,7 @@ export const team = [
     role: 'Advisory',
     category: 'Advisory',
     domain: 'health',
-    photo: '/images/team-25-sanjith.jpg',
+    photo: '/img/team-25-sanjith.webp',
   },
   {
     id: '25-04',
@@ -881,7 +917,7 @@ export const team = [
     role: 'Advisory',
     category: 'Advisory',
     domain: 'health',
-    photo: '/images/team-25-monishkumar.jpg',
+    photo: '/img/team-25-monishkumar.webp',
   },
   {
     id: '25-05',
@@ -891,7 +927,7 @@ export const team = [
     role: 'Advisory',
     category: 'Advisory',
     domain: 'health',
-    photo: '/images/team-25-abisha.jpg',
+    photo: '/img/team-25-abisha.webp',
   },
   {
     id: '25-06',
@@ -901,7 +937,7 @@ export const team = [
     role: 'Technical Lead',
     category: 'Domain Lead',
     domain: 'learn',
-    photo: '/images/team-25-andrew-sundaradhas.jpg',
+    photo: '/img/team-25-andrew-sundaradhas.webp',
   },
   {
     id: '25-07',
@@ -911,7 +947,7 @@ export const team = [
     role: 'Social Media Lead',
     category: 'Media',
     domain: 'access',
-    photo: '/images/team-25-manasa-c.jpg',
+    photo: '/img/team-25-manasa-c.webp',
   },
   {
     id: '25-08',
@@ -921,7 +957,7 @@ export const team = [
     role: 'Photography Lead',
     category: 'Media',
     domain: 'climate',
-    photo: '/images/team-26-karthikeyan-a.jpg',
+    photo: '/img/team-26-karthikeyan-a.webp',
   },
   {
     id: '25-09',
@@ -931,7 +967,7 @@ export const team = [
     role: 'Visual Media Lead',
     category: 'Media',
     domain: 'entrep',
-    photo: '/images/team-25-brinda.jpg',
+    photo: '/img/team-25-brinda.webp',
   },
   {
     id: '25-10',
@@ -941,7 +977,7 @@ export const team = [
     role: 'Logistics Lead',
     category: 'Operations',
     color: '#ffd80c',
-    photo: '/images/team-25-aathi.jpg',
+    photo: '/img/team-25-aathi.webp',
   },
   {
     id: '25-11',
@@ -951,7 +987,7 @@ export const team = [
     role: 'Discipline Lead',
     category: 'Operations',
     color: '#ffe9ce',
-    photo: '/images/team-25-yashwanth-kumar-s.jpg',
+    photo: '/img/team-25-yashwanth-kumar-s.webp',
   },
   {
     id: '25-12',
@@ -961,7 +997,7 @@ export const team = [
     role: 'Design Lead',
     category: 'Media',
     color: '#a3f7b5',
-    photo: '/images/team-25-dheepika-k.jpg',
+    photo: '/img/team-25-dheepika-k.webp',
   },
   {
     id: '25-13',
@@ -971,7 +1007,7 @@ export const team = [
     role: 'Design Lead',
     category: 'Media',
     color: '#a3f7b5',
-    photo: '/images/team-25-akshara.jpg',
+    photo: '/img/team-25-akshara.webp',
   },
   {
     id: '25-14',
@@ -980,7 +1016,7 @@ export const team = [
     role: 'Editing Lead',
     category: 'Media',
     color: '#9bf6ff',
-    photo: '/images/team-25-kethani.jpg',
+    photo: '/img/team-25-kethani.webp',
   },
   {
     id: '25-15',
@@ -990,7 +1026,7 @@ export const team = [
     role: 'EM Lead',
     category: 'Operations',
     color: '#ffd6a5',
-    photo: '/images/team-25-dharshini-j.jpg',
+    photo: '/img/team-25-dharshini-j.webp',
   },
   {
     id: '25-16',
@@ -1000,7 +1036,7 @@ export const team = [
     role: 'EM Lead',
     category: 'Operations',
     color: '#ffd6a5',
-    photo: '/images/team-25-yuvarajan-j.jpg',
+    photo: '/img/team-25-yuvarajan-j.webp',
   },
   {
     id: '25-17',
@@ -1010,7 +1046,7 @@ export const team = [
     role: 'Outreach Lead',
     category: 'Domain Lead',
     color: '#ffadad',
-    photo: '/images/team-25-priyadharshini-b.jpg',
+    photo: '/img/team-25-priyadharshini-b.webp',
   },
   {
     id: '25-18',
@@ -1020,7 +1056,7 @@ export const team = [
     role: 'Outreach Lead',
     category: 'Domain Lead',
     color: '#ffadad',
-    photo: '/images/team-25-vidhya.jpg',
+    photo: '/img/team-25-vidhya.webp',
   },
   {
     id: '25-19',
@@ -1030,7 +1066,7 @@ export const team = [
     role: 'Marketing Lead',
     category: 'Media',
     color: '#e0b0ff',
-    photo: '/images/team-25-arunprasad.jpg',
+    photo: '/img/team-25-arunprasad.webp',
   },
 
   // ─── 2026 – 2027 TENURE (Upcoming / New Core) ───
@@ -1041,7 +1077,7 @@ export const team = [
     role: 'Faculty Coordinator',
     category: 'Faculty',
     domain: 'learn',
-    photo: '/images/team-fac-priyadarshini.jpg',
+    photo: '/img/team-fac-priyadarshini.webp',
   },
   {
     id: '26-fac-02',
@@ -1050,7 +1086,7 @@ export const team = [
     role: 'Faculty Coordinator',
     category: 'Faculty',
     domain: 'learn',
-    photo: '/images/team-fac-mansoor-hussain.jpg',
+    photo: '/img/team-fac-mansoor-hussain.webp',
   },
   {
     id: '26-01',
@@ -1060,7 +1096,7 @@ export const team = [
     role: 'Chairperson',
     category: 'Leadership',
     domain: 'innov',
-    photo: '/images/team-26-aathi.jpg',
+    photo: '/img/team-26-aathi.webp',
   },
   {
     id: '26-02',
@@ -1069,7 +1105,7 @@ export const team = [
     role: 'Vice Chairperson',
     category: 'Leadership',
     domain: 'road',
-    photo: '/images/team-26-harini.jpg',
+    photo: '/img/team-26-harini.webp',
   },
   {
     id: '26-03',
@@ -1079,7 +1115,7 @@ export const team = [
     role: 'Secretary',
     category: 'Operations',
     color: '#fdffb6',
-    photo: '/images/team-26-karthikeyan-a.jpg',
+    photo: '/img/team-26-karthikeyan-a.webp',
   },
   {
     id: '26-04',
@@ -1088,7 +1124,7 @@ export const team = [
     role: 'Co-Secretary',
     category: 'Operations',
     color: '#caffbf',
-    photo: '/images/team-26-kanishk.jpg',
+    photo: '/img/team-26-kanishk.webp',
   },
   {
     id: '26-05',
@@ -1097,7 +1133,7 @@ export const team = [
     role: 'EM Lead',
     category: 'Operations',
     color: '#ffd6a5',
-    photo: '/images/team-26-shanmathi.jpg',
+    photo: '/img/team-26-shanmathi.webp',
   },
   {
     id: '26-06',
@@ -1106,7 +1142,7 @@ export const team = [
     role: 'EM Lead',
     category: 'Operations',
     color: '#ffd6a5',
-    photo: '/images/team-26-abishek.jpg',
+    photo: '/img/team-26-abishek.webp',
   },
   {
     id: '26-19',
@@ -1115,7 +1151,7 @@ export const team = [
     role: 'Events Lead',
     category: 'Operations',
     color: '#9bf6ff',
-    photo: '/images/team-26-gowtham.jpg',
+    photo: '/img/team-26-gowtham.webp',
   },
   {
     id: '26-20',
@@ -1124,7 +1160,7 @@ export const team = [
     role: 'Events Lead',
     category: 'Operations',
     color: '#9bf6ff',
-    photo: '/images/team-26-subhiksha.jpg',
+    photo: '/img/team-26-subhiksha.webp',
   },
   {
     id: '26-07',
@@ -1133,7 +1169,7 @@ export const team = [
     role: 'Outreach Lead',
     category: 'Domain Lead',
     color: '#ffadad',
-    photo: '/images/team-26-daniel.jpg',
+    photo: '/img/team-26-daniel.webp',
   },
   {
     id: '26-08',
@@ -1142,7 +1178,7 @@ export const team = [
     role: 'Outreach Lead',
     category: 'Domain Lead',
     color: '#ffadad',
-    photo: '/images/team-26-vrittiya.jpg',
+    photo: '/img/team-26-vrittiya.webp',
   },
   {
     id: '26-09',
@@ -1151,7 +1187,7 @@ export const team = [
     role: 'Editorial Lead',
     category: 'Media',
     color: '#e4c1f9',
-    photo: '/images/team-26-karunya.jpg',
+    photo: '/img/team-26-karunya.webp',
   },
   {
     id: '26-10',
@@ -1160,7 +1196,7 @@ export const team = [
     role: 'Editorial Lead',
     category: 'Media',
     color: '#e4c1f9',
-    photo: '/images/team-26-aneesh.jpg',
+    photo: '/img/team-26-aneesh.webp',
   },
   {
     id: '26-11',
@@ -1169,7 +1205,7 @@ export const team = [
     role: 'VSM Lead',
     category: 'Media',
     color: '#b7b2ff',
-    photo: '/images/team-26-ritesh.jpg',
+    photo: '/img/team-26-ritesh.webp',
   },
   {
     id: '26-12',
@@ -1178,7 +1214,7 @@ export const team = [
     role: 'VSM Lead',
     category: 'Media',
     color: '#b7b2ff',
-    photo: '/images/team-26-vikash.jpg',
+    photo: '/img/team-26-vikash.webp',
   },
   {
     id: '26-13',
@@ -1187,7 +1223,7 @@ export const team = [
     role: 'Publicity Lead',
     category: 'Media',
     color: '#ffe066',
-    photo: '/images/team-26-aishwarya.jpg',
+    photo: '/img/team-26-aishwarya.webp',
   },
   {
     id: '26-14',
@@ -1196,7 +1232,7 @@ export const team = [
     role: 'Publicity Lead',
     category: 'Media',
     color: '#ffe066',
-    photo: '/images/team-26-tharunika.jpg',
+    photo: '/img/team-26-tharunika.webp',
   },
   {
     id: '26-15',
@@ -1205,7 +1241,7 @@ export const team = [
     role: 'Creative Lead',
     category: 'Media',
     color: '#a0c4ff',
-    photo: '/images/team-26-kanika.jpg',
+    photo: '/img/team-26-kanika.webp',
   },
   {
     id: '26-16',
@@ -1214,7 +1250,7 @@ export const team = [
     role: 'Creative Lead',
     category: 'Media',
     color: '#a0c4ff',
-    photo: '/images/team-26-subhashree.jpg',
+    photo: '/img/team-26-subhashree.webp',
   },
   {
     id: '26-17',
@@ -1223,7 +1259,7 @@ export const team = [
     role: 'Creative Lead',
     category: 'Media',
     color: '#a0c4ff',
-    photo: '/images/team-26-tharun.jpg',
+    photo: '/img/team-26-tharun.webp',
   },
   {
     id: '26-18',
@@ -1232,7 +1268,7 @@ export const team = [
     role: 'Creative Lead',
     category: 'Media',
     color: '#a0c4ff',
-    photo: '/images/team-26-priya.jpg',
+    photo: '/img/team-26-priya.webp',
   },
 ]
 

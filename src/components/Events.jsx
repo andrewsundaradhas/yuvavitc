@@ -5,6 +5,7 @@ import { domains, events, tenures, pad } from '../data'
 import SectionHead from './SectionHead'
 import Banner from './Banner'
 import { Sticker, FIC } from './Sticker'
+import { pick } from '../lib/img'
 
 function Index({ list, onOpen }) {
   const [hover, setHover] = useState(null)
@@ -36,7 +37,7 @@ function Index({ list, onOpen }) {
         {hover && (
           <motion.div key={`${hover.tenure}-${hover.slug}`} style={{ x, y }} initial={{ opacity: 0, scale: 0.8, rotate: -6 }} animate={{ opacity: 1, scale: 1, rotate: -3 }} exit={{ opacity: 0, scale: 0.8 }}
             className="sticker pointer-events-none fixed left-0 top-0 z-40 hidden w-64 border-[6px] border-parchment md:block" >
-            <img src={hover.hoverPhoto || hover.photos[0].src} alt="" className="w-full object-contain max-h-72 bg-parchment" />
+            <img src={pick(hover.hoverPhoto || hover.photos[0].src, 512)} alt="" decoding="async" className="w-full object-contain max-h-72 bg-parchment" />
           </motion.div>
         )}
       </AnimatePresence>
