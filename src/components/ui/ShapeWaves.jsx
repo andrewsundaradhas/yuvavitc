@@ -399,6 +399,7 @@ export default function ShapeWaves({
     let introStart = 0;
     let introProgress = INTRO_END;
     let introArmed = false;
+    let seenOnce = false;
     let chargesActive = false;
     let bounds = null;
     let unsubscribeGpuError;
@@ -538,13 +539,20 @@ export default function ShapeWaves({
           label: 'shape-waves-composite',
           set: { composite: compositeParams, sceneTexture: sceneTarget, glowTexture: glowB, linearSampler }
         });
-        await Promise.all([
-          scene.compile({ colors: [outputFormat] }),
-          scene.compile(sceneTarget),
-          blurX.compile(glowA),
-          blurY.compile(glowB),
-          composite.compile({ colors: [outputFormat] })
-        ]);
+        // With glow off (About uses glow={0}) the frame is a single scene -> output pass, so only that pipeline is
+        // pre-compiled; the 4 glow pipelines compiled up front cost a visible GPU hitch while the user was scrolling.
+        // If glow is switched on later, vgpu compiles those passes on first use.
+        await Promise.all(
+          settingsRef.current.glow > 0
+            ? [
+                scene.compile({ colors: [outputFormat] }),
+                scene.compile(sceneTarget),
+                blurX.compile(glowA),
+                blurY.compile(glowB),
+                composite.compile({ colors: [outputFormat] })
+              ]
+            : [scene.compile({ colors: [outputFormat] })]
+        );
         if (disposed) return;
 
         const glowEnabled = () => settingsRef.current.glow > 0;
@@ -794,6 +802,11 @@ export default function ShapeWaves({
         visibilityObserver = new IntersectionObserver(
           entries => {
             visible = entries.some(entry => entry.isIntersecting);
+            // the host may mount this off-screen (idle mount): play the intro the first time it is actually seen
+            if (visible && !seenOnce) {
+              seenOnce = true;
+              if (settingsRef.current.intro && !reduceMotion.matches) introArmed = true;
+            }
             if (visible) wakeRenderer();
           },
           { threshold: 0 }

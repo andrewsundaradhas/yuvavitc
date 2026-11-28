@@ -35,6 +35,7 @@ function randomSource(seed) {
     return ((n ^ (n >>> 14)) >>> 0) / 4294967296;
   };
 }
+const PAPER_CACHE = new Map();
 function createPaperPath(rest, triangles, shortSide, density, sharpness, depth, seed) {
   const count = rest.length / 3;
   const points = Float64Array.from(rest);
@@ -236,6 +237,55 @@ function createPaperPath(rest, triangles, shortSide, density, sharpness, depth, 
   const creased = Float32Array.from(points);
   return { samples, creased };
 }
+
+// Paper grid + fold simulation (~240 ms of CPU). Pure function of these parameters, so it is cached across instances
+// and remounts, and exported so a page can pre-compute it in an idle moment before the paper mounts.
+export function buildPaper({ width = 320, height = 400, detail = 64, foldCount = 6, foldSharpness = 0.6, wrinkleDepth = 0.65, seed = 7 } = {}) {
+  const paperWidth = Math.max(1, finite(width, 320));
+  const paperHeight = Math.max(1, finite(height, 400));
+  const aspect = paperHeight / paperWidth;
+  const shortSide = Math.min(1, aspect);
+  const key = JSON.stringify([paperWidth, paperHeight, detail, foldCount, foldSharpness, wrinkleDepth, seed]);
+  const hit = PAPER_CACHE.get(key);
+  if (hit) return hit;
+  const resolution = Math.round(clamp(finite(detail, 64) / 4, 8, 24));
+  const columns = Math.max(8, Math.round(resolution / Math.max(1, aspect)));
+  const rows = Math.max(8, Math.round(resolution * Math.min(1, aspect)));
+  const rng = randomSource(finite(seed, 7));
+  const sharpness = clamp(finite(foldSharpness, 0.6), 0, 1);
+  const foldTotal = Math.round(clamp(finite(foldCount, 6), 3, 16));
+  const depth = clamp(finite(wrinkleDepth, 0.65), 0, 2);
+  const count = (columns + 1) * (rows + 1);
+  const original = new Float32Array(count * 3);
+  const uvs = new Float32Array(count * 2);
+  const indices = [];
+  for (let row = 0; row <= rows; row++) {
+    for (let col = 0; col <= columns; col++) {
+      const index = row * (columns + 1) + col;
+      const u = (col + (col > 0 && col < columns ? (rng() - 0.5) * 0.5 : 0)) / columns;
+      const v = (row + (row > 0 && row < rows ? (rng() - 0.5) * 0.5 : 0)) / rows;
+      const x = u - 0.5,
+        y = (v - 0.5) * aspect;
+      original[index * 3] = x;
+      original[index * 3 + 1] = y;
+      uvs[index * 2] = u;
+      uvs[index * 2 + 1] = v;
+      if (col < columns && row < rows) {
+        const a = index,
+          b = index + 1,
+          c = index + columns + 1,
+          d = c + 1;
+        if (rng() > 0.5) indices.push(a, b, d, a, d, c);
+        else indices.push(a, b, c, b, d, c);
+      }
+    }
+  }
+  const paperPath = createPaperPath(original, indices, shortSide, foldTotal, sharpness, depth, finite(seed, 7));
+  const built = { count, original, uvs, indices, paperPath };
+  PAPER_CACHE.set(key, built);
+  return built;
+}
+
 const PaperCrumple = ({
   src,
   alt = 'Crumplable image',
@@ -273,7 +323,6 @@ const PaperCrumple = ({
   className = '',
   style
 }) => {
-  const pathCache = useRef(null);
   const rootRef = useRef(null);
   const canvasRef = useRef(null);
   const hitRef = useRef(null);
@@ -344,47 +393,10 @@ const PaperCrumple = ({
     const paperHeight = Math.max(1, finite(height, 400));
     const aspect = paperHeight / paperWidth;
     const shortSide = Math.min(1, aspect);
-    const resolution = Math.round(clamp(finite(detail, 64) / 4, 8, 24));
-    const columns = Math.max(8, Math.round(resolution / Math.max(1, aspect)));
-    const rows = Math.max(8, Math.round(resolution * Math.min(1, aspect)));
-    const rng = randomSource(finite(seed, 7));
-    const sharpness = clamp(finite(foldSharpness, 0.6), 0, 1);
-    const foldTotal = Math.round(clamp(finite(foldCount, 6), 3, 16));
-    const depth = clamp(finite(wrinkleDepth, 0.65), 0, 2);
-    const count = (columns + 1) * (rows + 1);
-    const original = new Float32Array(count * 3);
+    const { count, original, uvs, indices, paperPath } = buildPaper({ width, height, detail, foldCount, foldSharpness, wrinkleDepth, seed });
     const positions = new Float32Array(count * 3);
-    const uvs = new Float32Array(count * 2);
-    const indices = [];
-    for (let row = 0; row <= rows; row++) {
-      for (let col = 0; col <= columns; col++) {
-        const index = row * (columns + 1) + col;
-        const u = (col + (col > 0 && col < columns ? (rng() - 0.5) * 0.5 : 0)) / columns;
-        const v = (row + (row > 0 && row < rows ? (rng() - 0.5) * 0.5 : 0)) / rows;
-        const x = u - 0.5,
-          y = (v - 0.5) * aspect;
-        original[index * 3] = x;
-        original[index * 3 + 1] = y;
-        uvs[index * 2] = u;
-        uvs[index * 2 + 1] = v;
-        if (col < columns && row < rows) {
-          const a = index,
-            b = index + 1,
-            c = index + columns + 1,
-            d = c + 1;
-          if (rng() > 0.5) indices.push(a, b, d, a, d, c);
-          else indices.push(a, b, c, b, d, c);
-        }
-      }
-    }
-    const pathKey = JSON.stringify([paperWidth, paperHeight, resolution, foldTotal, sharpness, depth, seed]);
-    if (pathCache.current?.key !== pathKey) {
-      pathCache.current = {
-        key: pathKey,
-        value: createPaperPath(original, indices, shortSide, foldTotal, sharpness, depth, finite(seed, 7))
-      };
-    }
-    const paperPath = pathCache.current.value;
+    const rng = randomSource(finite(seed, 7) + 1); // grain noise (the grid's rng now lives in buildPaper)
+    const sharpness = clamp(finite(foldSharpness, 0.6), 0, 1);
     const renderPositions = new Float32Array(indices.length * 3);
     const renderNormals = new Float32Array(indices.length * 3);
     const renderUvs = new Float32Array(indices.length * 2);
@@ -1015,10 +1027,20 @@ const PaperCrumple = ({
           if (first) frontMaterial.needsUpdate = backMaterial.needsUpdate = depthMaterial.needsUpdate = true;
           liveTextures.forEach(t => { textures.delete(t); t.dispose(); });
           liveTextures = [frontTexture, backTexture].filter(Boolean);
-          ready = true;
-          setStatus('ready');
-          hit.disabled = options.current.disabled;
-          wake();
+          const show = () => {
+            if (disposed || mine !== token) return;
+            ready = true;
+            setStatus('ready');
+            hit.disabled = options.current.disabled;
+            // mounted off-screen (idle mount): draw one warm-up frame now so texture/shadow uploads don't land on the
+            // first visible frame; the render loop still only runs while in view
+            if (!inView && !contextLost) { deform(); renderer.render(scene, camera); }
+            wake();
+          };
+          // First time only: compile the shaders in the background (KHR_parallel_shader_compile) before the first frame,
+          // instead of a synchronous compile inside render() that stalled the page ~190 ms per mount.
+          if (first && renderer.compileAsync) renderer.compileAsync(scene, camera).then(show, show);
+          else show();
         })
         .catch(error => {
           if (disposed || mine !== token) return;

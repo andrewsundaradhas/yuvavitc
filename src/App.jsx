@@ -21,7 +21,7 @@ import Lightbox from './components/Lightbox'
 import Footer from './components/Footer'
 import Queries from './components/Queries'
 import Preloader from './components/Preloader'
-import Deferred from './components/Deferred'
+import Deferred, { whenQuiet } from './components/Deferred'
 import { installAnchorSettle } from './lib/anchorSettle'
 
 // The intro plays on the first visit only (D-006); "Replay intro" in the footer still plays it on demand.
@@ -44,11 +44,16 @@ export default function App() {
   useEffect(() => { if (intro) markIntroSeen() }, [intro]) // seen as soon as it starts: a quick reload never replays it
   useEffect(() => installAnchorSettle(), [])
   useEffect(() => {
-    let id
-    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1))
-    const go = () => { id = setTimeout(() => idle(() => Object.values(loaders).forEach((load) => load().catch(() => {}))), 1500) }
+    // Background work, one job per quiet moment (no input for 1.2 s) so none of it lands mid-scroll: Prints' chunk
+    // (three.js, 558 KB to evaluate), its ~240 ms fold simulation, then the gallery chunk. About/Tide/Prints themselves
+    // idle-mount via Deferred idleAfter.
+    let cancel = () => {}, id
+    let printsMod
+    const queue = [() => loaders.prints().then((m) => { printsMod = m }), () => printsMod?.warmPrints?.(), loaders.gallery]
+    const next = () => { const job = queue.shift(); if (job) cancel = whenQuiet(() => { Promise.resolve().then(job).catch(() => {}).finally(next) }) }
+    const go = () => { id = setTimeout(next, 1500) }
     if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true })
-    return () => { clearTimeout(id); window.removeEventListener('load', go) }
+    return () => { clearTimeout(id); cancel(); window.removeEventListener('load', go) }
   }, [])
   const replay = () => { window.scrollTo(0, 0); setReady(false); setHeroKey((k) => k + 1); setIntro(true) }
 
@@ -62,12 +67,12 @@ export default function App() {
         <Marquee />
         <Intro />
         <Award onPhoto={(photos, index) => setBox({ photos, index })} />
-        <Deferred id="about" className="h-[1150px] bg-[#ffd80c] md:h-[1040px] xl:h-[1216px]"><About /></Deferred>
+        <Deferred id="about" idleAfter={600} className="h-[1150px] bg-[#ffd80c] md:h-[1040px] xl:h-[1216px]"><About /></Deferred>
         <Events filter={filter} setFilter={setFilter} onOpen={setActive} />
         <Domains onPick={setFilter} />
         <Team />
-        <Deferred className="h-[772px] bg-[#050505] md:h-[707px] xl:h-[828px]"><Tide /></Deferred>
-        <Deferred id="prints" className="h-[1540px] bg-[#8a53ff] md:h-[935px] xl:h-[994px]"><PrintTable /></Deferred>
+        <Deferred idleAfter={600} className="h-[772px] bg-[#050505] md:h-[707px] xl:h-[828px]"><Tide /></Deferred>
+        <Deferred id="prints" idleAfter={600} className="h-[1540px] bg-[#8a53ff] md:h-[935px] xl:h-[994px]"><PrintTable /></Deferred>
         <Deferred id="gallery" className="h-[761px] bg-[#050505] md:h-[942px] xl:h-[972px]"><Gallery onPhoto={(photos, index) => setBox({ photos, index })} /></Deferred>
         <Queries />
       </main>

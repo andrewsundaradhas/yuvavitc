@@ -237,7 +237,8 @@ function AwardField() {
   )
 }
 
-/** Per-character 3D perspective flip + blur reveal */
+/** Per-character 3D perspective flip reveal. (The per-letter blur() filter was removed: animating blur on ~14 large
+ *  letters forced a full repaint every frame and made the section stutter while scrolling.) */
 function FlipHeadline({ text, className = '', baseDelay = 0 }) {
   return (
     <span className={`inline-flex flex-wrap ${className}`} style={{ perspective: '900px' }}>
@@ -245,8 +246,8 @@ function FlipHeadline({ text, className = '', baseDelay = 0 }) {
         <motion.span
           key={`${text}-${idx}`}
           className="inline-block origin-bottom"
-          initial={{ opacity: 0, rotateX: -85, y: 24, filter: 'blur(8px)' }}
-          whileInView={{ opacity: 1, rotateX: 0, y: 0, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, rotateX: -85, y: 24 }}
+          whileInView={{ opacity: 1, rotateX: 0, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{
             duration: 0.7,
@@ -508,7 +509,7 @@ export default function Award({ onPhoto }) {
                 <FlipHeadline
                   text="Award"
                   baseDelay={0.28}
-                  className="text-[#ffd80c] drop-shadow-[0_0_28px_rgba(255,216,12,0.5)]"
+                  className="text-[#ffd80c] [text-shadow:0_0_28px_rgba(255,216,12,0.5)]"
                 />
               </span>
 

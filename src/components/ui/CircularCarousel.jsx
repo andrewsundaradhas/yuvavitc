@@ -228,7 +228,10 @@ const CircularCarousel = ({
   }, [count, along, gap, curveValue, layout.spread]);
 
   const tiles = useMemo(() => {
-    const total = curveValue > 0.001 ? TILES : 1;
+    // strips per card: ~3 degrees of bend each is visually smooth; a fixed 8 (x2 faces) gave 480 composited image
+    // layers for a 30-card ring and a ~200 ms first-paint hitch. Capped at TILES.
+    const bendDeg = ((along / Math.max(radius, 1)) * 180) / Math.PI;
+    const total = curveValue > 0.001 ? Math.max(1, Math.min(TILES, Math.ceil(bendDeg / 3))) : 1;
     const length = along / total;
     const bend = curveValue > 0.001 ? radius / curveValue : 0;
     return Array.from({ length: total }, (_, index) => {

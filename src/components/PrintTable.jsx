@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useAnimationControls } from 'framer-motion'
 import { domains, events } from '../data'
-import PaperCrumple from './ui/PaperCrumple'
+import PaperCrumple, { buildPaper } from './ui/PaperCrumple'
 import { Sticker, FIC } from './Sticker'
 import { pick as pickImg } from '../lib/img'
 
@@ -13,6 +13,9 @@ const SLOTS = [
 const relief = ['PHEW!', 'ALL BETTER', 'GOOD AS NEW', 'MOSTLY…']
 const pick = (a) => a[Math.floor(Math.random() * a.length)]
 const SHUFFLE_MS = 6000
+// paper geometry shared by all prints; warmPrints() pre-computes its ~240 ms fold simulation in an idle moment
+const PAPER = { width: 350, height: 265, foldCount: 7, detail: 56 }
+export const warmPrints = () => buildPaper(PAPER)
 
 // Replays the print's drop-in spring when its slot gets a new event (no remount: the paper's WebGL scene is kept).
 function Reshuffle({ slug, n, children }) {
@@ -88,8 +91,8 @@ export default function PrintTable() {
                 className="relative rounded-[15px]" style={{ background: FIC.cream }}>
                 <Reshuffle slug={p.slug} n={n}>
                 <PaperCrumple
-                  src={pickImg(p.e.photos[0].src, 700)} alt={p.e.photos[0].alt} width={350} height={265} sceneHeight={stage} rotation={p.rotation}
-                  releaseBehavior="creased" crumpleAmount={0.9} creaseStrength={0.2} foldCount={7} detail={56}
+                  src={pickImg(p.e.photos[0].src, 700)} alt={p.e.photos[0].alt} {...PAPER} sceneHeight={stage} rotation={p.rotation}
+                  releaseBehavior="creased" crumpleAmount={0.9} creaseStrength={0.2}
                   paperColor="#f4f0e8" dragRadius={60} returnToOrigin resetKey={resetKey} onStateChange={react(p)}
                 />
                 <AnimatePresence>
