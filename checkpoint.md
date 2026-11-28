@@ -267,3 +267,32 @@ Commits:
 - **Found and fixed (`1adef22`): Prints froze for ~0.9 s every 6 s.** The shuffle remounted 3 three.js scenes. PaperCrumple now builds once and swaps textures, and PrintTable keeps one figure per slot and replays the drop-in spring. Over 20 s the long frames went from 967/933/917 ms to a maximum of 33 ms. Crumple interaction, shuffle and captions were verified; no console errors; still 3 canvases.
 - **Result, 1920×1080 and 412×915:** every section averages 16.6–16.8 ms/frame (60 fps), with p95 ≤ 16.8 ms. A handful of long frames remain only when *jumping straight into* Prints or Gallery (they mount on arrival). In a normal scroll they mount ~1.5 screens early.
 - Smoke suite 25/25 (all 5 profiles).
+
+## CP-005 — Award "stuck" (real scroll), local query API (2026-11-28)
+Owner report: the Award section still sticks; the query form shows "Couldn't send that". Commits `55defcb`, `8c89e79`, plus the idle-start tweak (see the decision.md commit log).
+
+### How it was measured (new probes in `scratch/`, real GPU)
+- `fullscroll*.mjs`: a natural wheel scroll of the whole page after a pause, logging every frame > 50 ms with the section in view. Warm-up page first: a fresh test browser compiles its GPU shaders on the first page; a real browser has them cached.
+- `award-ab*.mjs`, `award-scroll-ab*.mjs`: A/B by switching features off (filters, images, canvas, About chunk, WebGPU).
+- `prints-trace.mjs`, `award-trace.mjs`: Chrome traces of the long tasks.
+
+### Root causes → fixes
+| Cause | Evidence | Fix |
+|---|---|---|
+| Award title: per-letter `blur()` reveal + `drop-shadow` filter glow | wheel scroll: 11 long frames → 0 with filters off | Blur dropped (flip/fade kept); glow → identical `text-shadow` |
+| About (ShapeWaves) mounted 1.5 screens early, i.e. while Award is on screen | worst frame 67 → 17 ms with About blocked; ~33 ms is WebGPU, ~50 ms is DOM/fonts | `Deferred idleAfter`: About/Tide/Prints mount only after 1.2 s without input, one per second; ShapeWaves compiles only the pipeline it uses and replays its intro when first seen |
+| Prints mount: fold simulation ×3 (721 ms) + sync shader compile (190–237 ms) | trace | Simulation cached per parameters and pre-computed in a quiet moment (`warmPrints`); `compileAsync`; warm-up frame off-screen |
+| Tide (MicroSlats) first visible frame ~100 ms | wheel scroll | Warm-up frame at mount |
+| Gallery ring: 30 cards × 8 strips × 2 faces = 480 composited image layers | wheel scroll ~200 ms | Adaptive strips (~3° each) → 240 layers, same look |
+| Query form locally: `POST /api/queries` → **404** (`vite dev`/`preview` don't run Vercel functions) | curl | Serve-only Vite plugin runs `api/*.mjs` unchanged, with `RESEND_API_KEY` from `.env.local` |
+
+### Results
+- **Award during a real scroll:** clean in runs 2–6 (run 1 = cold GPU shader cache of the fresh test browser).
+- **Full page after a pause (1920×1080, 3 runs):** Award/About/Team/Tide/Prints have no frames > 50 ms; Gallery's first view 83–133 ms (was 200–267); small 67–83 ms frames at the very top only when the first scroll coincides with a background job.
+- **Full suite:** 140 passed / 2 failed (LCP budget, throttled) / 3 skipped (7.3 min). Same as CP-004.
+- **Fair LCP, A/B in the same session vs `1adef22`:** desktop 2.99–3.25 s vs 3.08–3.23 s; Pixel 3.04–3.27 s vs 2.94–2.98 s (within noise); CLS 0 both.
+- **Local API (no mail sent):** empty → 400 "Invalid message", bad email → 400, honeypot → 200, GET → 405.
+
+### Not verified here
+- A real send through Resend was not triggered by me (project rule: tests never send real email). The owner should send one test query from the local preview or the Vercel preview.
+- With the `onboarding@resend.dev` sender, Resend only delivers to the address that owns the Resend account; if that isn't yuvavitc@gmail.com, sends fail with a 403 (the preview terminal shows `Resend error: …`). The fix then is a verified domain in Resend, or a Resend account on yuvavitc@gmail.com.

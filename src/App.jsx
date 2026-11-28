@@ -51,7 +51,7 @@ export default function App() {
     let printsMod
     const queue = [() => loaders.prints().then((m) => { printsMod = m }), () => printsMod?.warmPrints?.(), loaders.gallery]
     const next = () => { const job = queue.shift(); if (job) cancel = whenQuiet(() => { Promise.resolve().then(job).catch(() => {}).finally(next) }) }
-    const go = () => { id = setTimeout(next, 1500) }
+    const go = () => { id = setTimeout(next, 2500) } // after the hero entrance (~2 s): background work must not compete with it
     if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true })
     return () => { clearTimeout(id); cancel(); window.removeEventListener('load', go) }
   }, [])
@@ -67,12 +67,12 @@ export default function App() {
         <Marquee />
         <Intro />
         <Award onPhoto={(photos, index) => setBox({ photos, index })} />
-        <Deferred id="about" idleAfter={600} className="h-[1150px] bg-[#ffd80c] md:h-[1040px] xl:h-[1216px]"><About /></Deferred>
+        <Deferred id="about" idleAfter={2500} className="h-[1150px] bg-[#ffd80c] md:h-[1040px] xl:h-[1216px]"><About /></Deferred>
         <Events filter={filter} setFilter={setFilter} onOpen={setActive} />
         <Domains onPick={setFilter} />
         <Team />
-        <Deferred idleAfter={600} className="h-[772px] bg-[#050505] md:h-[707px] xl:h-[828px]"><Tide /></Deferred>
-        <Deferred id="prints" idleAfter={600} className="h-[1540px] bg-[#8a53ff] md:h-[935px] xl:h-[994px]"><PrintTable /></Deferred>
+        <Deferred idleAfter={2500} className="h-[772px] bg-[#050505] md:h-[707px] xl:h-[828px]"><Tide /></Deferred>
+        <Deferred id="prints" idleAfter={2500} className="h-[1540px] bg-[#8a53ff] md:h-[935px] xl:h-[994px]"><PrintTable /></Deferred>
         <Deferred id="gallery" className="h-[761px] bg-[#050505] md:h-[942px] xl:h-[972px]"><Gallery onPhoto={(photos, index) => setBox({ photos, index })} /></Deferred>
         <Queries />
       </main>
